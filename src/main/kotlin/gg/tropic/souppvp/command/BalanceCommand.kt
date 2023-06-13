@@ -6,6 +6,7 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.math.Numbers
 
 /**
  * @author GrowlyX
@@ -17,6 +18,8 @@ object BalanceCommand : ScalaCommand()
     @CommandAlias("bal|balance")
     fun onBalance(player: ScalaPlayer) =
         with(player.profile) {
-            player.sendMessage("${CC.SEC}Balance: ${CC.PRI}$coins ⛀")
+            player.sendMessage("${CC.SEC}Balance: ${CC.PRI}${
+                Numbers.format(coins)
+            } ⛀")
         }
 }

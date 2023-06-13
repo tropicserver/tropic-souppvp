@@ -14,6 +14,9 @@ val Player.profile: SoupProfile
 val ScalaPlayer.profile: SoupProfile
     get() = SoupProfileService.find(bukkit())!!
 
+inline fun <reified T> Player.extract(metadata: String) =
+    getMetadata(metadata).firstOrNull()?.value() as T?
+
 fun Player.refresh(gameMode: GameMode = GameMode.ADVENTURE)
 {
     health = maxHealth
