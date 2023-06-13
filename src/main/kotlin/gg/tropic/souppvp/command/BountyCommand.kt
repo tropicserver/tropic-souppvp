@@ -3,6 +3,7 @@ package gg.tropic.souppvp.command
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
 import gg.scala.commons.acf.annotation.Default
 import gg.scala.commons.acf.annotation.Description
 import gg.scala.commons.acf.annotation.HelpCommand
@@ -34,6 +35,7 @@ object BountyCommand : ScalaCommand()
     }
 
     @Default
+    @CommandCompletion("@players")
     fun onView(sender: ScalaPlayer, player: LemonPlayer)
     {
         val profile = player.bukkitPlayer!!.profile
@@ -58,15 +60,25 @@ object BountyCommand : ScalaCommand()
     }
 
     @Subcommand("set")
+    @CommandCompletion("@players")
     @Description("Place a bounty on a player.")
     fun onPlace(sender: ScalaPlayer, player: LemonPlayer, amount: Double)
     {
         val profile = sender.profile
         val targetProfile = player.bukkitPlayer!!.profile
 
+        if (profile.identifier == targetProfile.identifier)
+        {
+            throw ConditionFailedException(
+                "You cannot place a bounty on yourself!"
+            )
+        }
+
         if (amount < 0)
         {
-            throw ConditionFailedException("Your bounty must be a positive number!")
+            throw ConditionFailedException(
+                "Your bounty must be a positive number!"
+            )
         }
 
         if (profile.coins < amount)
@@ -88,14 +100,14 @@ object BountyCommand : ScalaCommand()
 
             sender.sendMessage("${CC.SEC}You placed a bounty of ${CC.GOLD}${
                 Numbers.format(amount)
-            } $coinIcon${CC.SEC} coins on ${CC.PRI}${
+            } $coinIcon${CC.SEC} on ${CC.GREEN}${
                 player.bukkitPlayer!!.name
             }${CC.SEC}!")
 
             Bukkit.broadcastMessage(
                 "${CC.SEC}A bounty of ${CC.GOLD}${
                     Numbers.format(amount)
-                } $coinIcon${CC.SEC} coins has been placed on ${CC.PRI}${
+                } $coinIcon${CC.SEC} has been placed on ${CC.GREEN}${
                     player.bukkitPlayer!!.name
                 }${CC.SEC}!"
             )

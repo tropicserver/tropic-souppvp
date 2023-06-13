@@ -4,12 +4,9 @@ import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
-import gg.tropic.souppvp.profile.PlayerState
-import gg.tropic.souppvp.profile.coinIcon
+import gg.tropic.souppvp.profile.*
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.local.CombatTag
-import gg.tropic.souppvp.profile.profile
-import gg.tropic.souppvp.profile.refresh
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.terminable.composite.CompositeTerminable
@@ -83,7 +80,7 @@ object ListenerService : Listener
                 expectedEnd = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15L)
             ))
         )
-        player.sendMessage("${CC.RED}You have been combat-tagged!")
+        player.sendMessage("${CC.RED}You are now combat-tagged!")
 
         Events
             .subscribe(PlayerQuitEvent::class.java)
@@ -115,6 +112,11 @@ object ListenerService : Listener
             state = PlayerState.Spawn
         }
 
+        entity.extract<CombatTag>("combat")
+            ?.apply {
+                terminable.closeAndReportException()
+            }
+
         entity.killer?.apply {
             profile.kills += 1
             profile.save()
@@ -127,7 +129,7 @@ object ListenerService : Listener
 
                         // TODO: server broadcast for this?
                         sendMessage(
-                            "${CC.SEC}You won a bounty placed on ${CC.GREEN}${entity.name} worth ${CC.GOLD}${
+                            "${CC.SEC}You claimed a bounty on ${CC.GREEN}${entity.name}${CC.SEC} worth ${CC.GOLD}${
                                 Numbers.format(amount)
                             } $coinIcon${CC.SEC}."
                         )

@@ -1,16 +1,14 @@
 package gg.tropic.souppvp.command.admin
 
 import gg.scala.commons.acf.CommandHelp
-import gg.scala.commons.acf.annotation.CommandAlias
-import gg.scala.commons.acf.annotation.CommandPermission
-import gg.scala.commons.acf.annotation.Default
-import gg.scala.commons.acf.annotation.Description
-import gg.scala.commons.acf.annotation.HelpCommand
-import gg.scala.commons.acf.annotation.Subcommand
+import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
+import gg.scala.lemon.player.LemonPlayer
 import gg.tropic.souppvp.config.config
+import gg.tropic.souppvp.profile.coinIcon
+import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.menu.menus.TextEditorMenu
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
@@ -29,6 +27,20 @@ object AdminCommand : ScalaCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("player add-balance")
+    @Description("Add balance to a player.")
+    @CommandCompletion("@players")
+    fun onAddBalance(player: ScalaPlayer, target: LemonPlayer, amount: Double)
+    {
+        target.bukkitPlayer!!.profile
+            .apply {
+                this.coins += amount
+                player.sendMessage(
+                    "${CC.SEC}Increased balance by ${CC.GOLD}$amount $coinIcon${CC.SEC}."
+                )
+            }
     }
 
     @Subcommand("set-spawn")

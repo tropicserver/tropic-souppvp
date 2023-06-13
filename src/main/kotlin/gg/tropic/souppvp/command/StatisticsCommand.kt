@@ -2,6 +2,7 @@ package gg.tropic.souppvp.command
 
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
@@ -22,6 +23,7 @@ import java.util.concurrent.CompletableFuture
 @AutoRegister
 object StatisticsCommand : ScalaCommand()
 {
+    @CommandCompletion("@players")
     @CommandAlias("stats|statistics")
     fun onBalance(
         player: ScalaPlayer,
