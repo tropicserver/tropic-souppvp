@@ -5,6 +5,7 @@ import gg.scala.flavor.inject.Inject
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.profile.PlayerState
+import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.profile
 import gg.tropic.souppvp.profile.refresh
@@ -12,6 +13,7 @@ import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -99,6 +101,7 @@ object ListenerService : Listener
             .async()
             .runLater({
                 player.sendMessage("${CC.GRAY}You are no longer in combat!")
+                terminable.closeAndReportException()
             }, 15L, TimeUnit.SECONDS)
             .bindWith(terminable)
     }
@@ -119,6 +122,24 @@ object ListenerService : Listener
         entity.killer?.apply {
             profile.kills += 1
             profile.save()
+
+            if (entity.profile.bounty != null)
+            {
+                entity.profile.bounty!!
+                    .apply {
+                        profile.coins += this.amount
+
+                        // TODO: server broadcast for this?
+                        sendMessage(
+                            "${CC.SEC}You won a bounty placed on ${CC.GREEN}${entity.name} worth ${CC.GOLD}${
+                                Numbers.format(amount)
+                            } $coinIcon${CC.SEC}."
+                        )
+                    }
+
+                entity.profile.bounty = null
+                entity.profile.save()
+            }
         }
     }
 

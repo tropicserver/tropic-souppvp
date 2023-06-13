@@ -4,6 +4,7 @@ import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
+import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.math.Numbers
@@ -20,6 +21,6 @@ object BalanceCommand : ScalaCommand()
         with(player.profile) {
             player.sendMessage("${CC.SEC}Balance: ${CC.PRI}${
                 Numbers.format(coins)
-            } ⛀")
+            } $coinIcon")
         }
 }

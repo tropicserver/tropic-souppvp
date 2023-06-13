@@ -10,6 +10,7 @@ import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import gg.tropic.souppvp.profile.SoupProfile
+import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.util.CC
 import java.util.concurrent.CompletableFuture
@@ -53,6 +54,6 @@ object StatisticsCommand : ScalaCommand()
             "${CC.SEC}Kills: ${CC.GREEN}$kills",
             "${CC.SEC}Deaths: ${CC.RED}$deaths",
             "${CC.SEC}Consumed soups: ${CC.AQUA}$soupsConsumed",
-            "${CC.SEC}Balance: ${CC.GOLD}$coins ⛀"
+            "${CC.SEC}Balance: ${CC.GOLD}$coins $coinIcon"
         )
 }

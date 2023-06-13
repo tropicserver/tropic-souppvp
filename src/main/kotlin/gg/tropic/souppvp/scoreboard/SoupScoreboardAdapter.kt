@@ -2,6 +2,7 @@ package gg.tropic.souppvp.scoreboard
 
 import gg.scala.flavor.service.Service
 import gg.tropic.souppvp.listener.ListenerService
+import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.extract
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
@@ -28,14 +29,14 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
         lines += ""
         lines += "${CC.WHITE}Kills: ${CC.GOLD}${profile.kills}"
         lines += "${CC.WHITE}Deaths: ${CC.GOLD}${profile.deaths}"
-        lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} ⛀"
+        lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
 
         profile.bounty
             ?.apply {
                 lines += ""
                 lines += "${CC.GREEN}Bounty:"
                 lines += "${CC.WHITE}Contributors: ${CC.GREEN}${contributors.size}"
-                lines += "${CC.WHITE}Total: ${CC.GOLD}$amount ⛀"
+                lines += "${CC.WHITE}Total: ${CC.GOLD}$amount $coinIcon"
             }
 
         player
