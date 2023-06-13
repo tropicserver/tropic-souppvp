@@ -186,7 +186,7 @@ object ListenerService : Listener
                     player.extract<RefillStationCooldown>("refill")
                         ?.apply {
                             player.sendMessage(
-                                "${CC.RED}You're on cooldown. You can refill again in $expectedEndFormat!"
+                                "${CC.RED}You're on cooldown. You can refill again in ${expectedEndFormat}s!"
                             )
                             return
                         }

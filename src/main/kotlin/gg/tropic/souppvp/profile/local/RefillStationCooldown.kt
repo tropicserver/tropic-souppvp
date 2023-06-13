@@ -12,7 +12,7 @@ data class RefillStationCooldown(
 )
 {
     val expectedEndFormat: String
-        get() = "%.2f".format(
+        get() = "%.1f".format(
             (expectedEnd - System.currentTimeMillis()) / 1000.0f
         )
 }
