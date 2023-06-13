@@ -29,6 +29,8 @@ object ListenerService : Listener
         player.profile.state = PlayerState.Spawn
     }
 
+
+
     @EventHandler
     fun PlayerDeathEvent.on()
     {

@@ -35,7 +35,9 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
                 lines += "${CC.WHITE}Total: ${CC.GOLD}$amount ⛀"
             }
 
-        lines += "${CC.GRAY}tropic.gg ${CC.RESET} ${CC.RESET} ${CC.RESET} ${CC.RESET} ${CC.RESET} ${CC.RESET}"
+
+
+        lines += "${CC.GRAY}tropic.gg" + "          "  + CC.GRAY + "      "  + CC.GRAY
     }
 
     override fun getTitle(player: Player) = "${CC.B_PRI}Soup PvP"
