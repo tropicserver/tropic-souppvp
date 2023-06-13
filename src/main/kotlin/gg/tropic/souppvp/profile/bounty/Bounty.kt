@@ -7,6 +7,6 @@ import java.util.UUID
  * @since 6/12/2023
  */
 data class Bounty(
-    var amount: Int,
-    val contributors: MutableList<UUID> = mutableListOf()
+    var amount: Double,
+    val contributors: MutableSet<UUID> = mutableSetOf()
 )

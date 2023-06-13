@@ -4,6 +4,7 @@ import gg.scala.flavor.service.Service
 import gg.tropic.souppvp.listener.ListenerService
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.extract
+import gg.tropic.souppvp.profile.local.CombatTag
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 import net.evilblock.cubed.scoreboard.ScoreboardAdapterRegister
@@ -40,13 +41,11 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
             }
 
         player
-            .extract<ListenerService.CombatTag>("combat")
+            .extract<CombatTag>("combat")
             ?.apply {
                 lines += ""
                 lines += "${CC.RED}Combat Tag:"
-                lines += "${CC.WHITE}Ends: ${CC.RED}${
-                    "%.2f".format((expectedEnd - System.currentTimeMillis()) / 1000.0f)
-                }s"
+                lines += "${CC.WHITE}Ends: ${CC.RED}${expectedEndFormat}s"
             }
 
         lines += ""

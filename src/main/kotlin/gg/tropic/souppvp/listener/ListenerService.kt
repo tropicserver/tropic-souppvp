@@ -7,6 +7,7 @@ import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.profile.PlayerState
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
+import gg.tropic.souppvp.profile.local.CombatTag
 import gg.tropic.souppvp.profile.profile
 import gg.tropic.souppvp.profile.refresh
 import me.lucko.helper.Events
@@ -59,11 +60,6 @@ object ListenerService : Listener
             startCombatTag(damager as Player)
         }
     }
-
-    data class CombatTag(
-        val terminable: CompositeTerminable,
-        val expectedEnd: Long
-    )
 
     private fun startCombatTag(player: Player)
     {

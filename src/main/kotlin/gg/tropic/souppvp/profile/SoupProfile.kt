@@ -28,11 +28,14 @@ data class SoupProfile(
     var bounty: Bounty? = null
 
     @Transient
-    var state: PlayerState = PlayerState.Loading
+    internal var backingState = PlayerState.Loading
+
+    var state: PlayerState
+        get() = backingState
         set(value)
         {
-            val oldValue = state
-            field = value
+            val oldValue = backingState
+            this.backingState = value
 
             PlayerStateChangeEvent(
                 this@SoupProfile,

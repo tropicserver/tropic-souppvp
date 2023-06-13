@@ -9,6 +9,8 @@ import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
+import gg.tropic.souppvp.profile.extract
+import gg.tropic.souppvp.profile.local.CombatTag
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.event.filter.EventFilters
@@ -34,16 +36,13 @@ object SpawnCommand : ScalaCommand()
         Events
             .subscribe(PlayerQuitEvent::class.java)
             .handler {
-                it.player.getMetadata("spawn")
-                    .apply {
-                        if (this.isNotEmpty())
-                        {
-                            val composite = first().value() as CompositeTerminable
-                            composite.closeAndReportException()
-                        }
+                it.player
+                    .extract<CompositeTerminable>("spawn")
+                    ?.apply {
+                        closeAndReportException()
                     }
-                it.player.removeMetadata("spawn", plugin)
             }
+            .bindWith(plugin)
     }
 
     @CommandAlias("spawn")
@@ -55,6 +54,14 @@ object SpawnCommand : ScalaCommand()
                 "You're already returning to spawn!"
             )
         }
+
+        player.bukkit()
+            .extract<CombatTag>("combat")
+            ?.apply {
+                throw ConditionFailedException(
+                    "You are combat-tagged! Try again in $expectedEndFormat."
+                )
+            }
 
         val composite = CompositeTerminable.create()
         composite.with {
