@@ -166,7 +166,7 @@ object ListenerService : Listener
     private val soup = ItemStack(Material.MUSHROOM_SOUP)
     private val inventoryContents = mutableListOf<ItemStack>()
         .apply {
-            repeat(54) {
+            repeat(27) {
                 add(soup)
             }
         }
@@ -178,13 +178,51 @@ object ListenerService : Listener
         {
             if (clickedBlock.type == Material.WALL_SIGN)
             {
-                val sign = clickedBlock as Sign
+                val sign = clickedBlock.state as Sign
 
-                if (sign.getLine(1).isNotEmpty())
+                if (sign.getLine(0).isNotEmpty())
                 {
+                    if (player.hasMetadata("refill"))
+                    {
+                        player.sendMessage("${CC.RED}Try using the refill station again in 30 seconds!")
+                        return
+                    }
+
+                    val terminable = CompositeTerminable.create()
+                    terminable.with {
+                        player
+                            .removeMetadata(
+                                "refill", plugin
+                            )
+                    }
+
+                    player.setMetadata(
+                        "refill",
+                        FixedMetadataValue(
+                            plugin, terminable
+                        )
+                    )
+
+                    Events
+                        .subscribe(PlayerQuitEvent::class.java)
+                        .handler {
+                            // TODO: logged out while in combat?
+                            terminable.closeAndReportException()
+                        }
+                        .bindWith(terminable)
+
+                    Schedulers
+                        .async()
+                        .runLater({
+                            terminable.closeAndReportException()
+                        }, 30L, TimeUnit.SECONDS)
+                        .bindWith(terminable)
+
                     val inventory = Bukkit
                         .createInventory(
-                            player, 54, "Refill your inventory..."
+                            player,
+                            InventoryType.CHEST,
+                            "Refill your inventory..."
                         )
 
                     inventory.contents = inventoryContents
