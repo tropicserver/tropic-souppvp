@@ -12,16 +12,24 @@ import me.lucko.helper.Schedulers
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.math.Numbers
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Material
+import org.bukkit.block.Sign
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.inventory.InventoryType
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.concurrent.TimeUnit
+
 
 /**
  * @author GrowlyX
@@ -75,10 +83,12 @@ object ListenerService : Listener
 
         player.setMetadata(
             "combat",
-            FixedMetadataValue(plugin, CombatTag(
-                terminable = terminable,
-                expectedEnd = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15L)
-            ))
+            FixedMetadataValue(
+                plugin, CombatTag(
+                    terminable = terminable,
+                    expectedEnd = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(15L)
+                )
+            )
         )
         player.sendMessage("${CC.RED}You are now combat-tagged!")
 
@@ -151,5 +161,37 @@ object ListenerService : Listener
 
         profile.player().refresh(GameMode.ADVENTURE)
         profile.player().teleport(config.spawn)
+    }
+
+    private val soup = ItemStack(Material.MUSHROOM_SOUP)
+    private val inventoryContents = mutableListOf<ItemStack>()
+        .apply {
+            repeat(54) {
+                add(soup)
+            }
+        }
+
+    @EventHandler
+    fun PlayerInteractEvent.on()
+    {
+        if (action == Action.RIGHT_CLICK_BLOCK)
+        {
+            if (clickedBlock.type == Material.WALL_SIGN)
+            {
+                val sign = clickedBlock as Sign
+
+                if (sign.getLine(1).isNotEmpty())
+                {
+                    val inventory = Bukkit
+                        .createInventory(
+                            player, 54, "Refill your inventory..."
+                        )
+
+                    inventory.contents = inventoryContents
+                        .toTypedArray()
+                    player.openInventory(inventory)
+                }
+            }
+        }
     }
 }
