@@ -44,8 +44,7 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
             .extract<CombatTag>("combat")
             ?.apply {
                 lines += ""
-                lines += "${CC.RED}Combat Tag:"
-                lines += "${CC.WHITE}Ends: ${CC.RED}${expectedEndFormat}s"
+                lines += "${CC.RED}Combat Tag: ${CC.RED}${expectedEndFormat}s"
             }
 
         lines += ""
