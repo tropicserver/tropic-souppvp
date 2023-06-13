@@ -1,6 +1,8 @@
 package gg.tropic.souppvp.profile
 
+import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
+import gg.scala.store.storage.type.DataStoreStorageType
 import gg.tropic.souppvp.profile.bounty.Bounty
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import org.bukkit.Bukkit
@@ -42,4 +44,8 @@ data class SoupProfile(
         }
 
     fun player() = Bukkit.getPlayer(identifier)!!
+
+    fun save() = DataStoreObjectControllerCache
+        .findNotNull<SoupProfile>()
+        .save(this, DataStoreStorageType.MONGO)
 }

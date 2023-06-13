@@ -6,6 +6,7 @@ import gg.tropic.souppvp.profile.PlayerState
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.profile
 import gg.tropic.souppvp.profile.refresh
+import net.evilblock.cubed.util.CC
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -31,7 +32,19 @@ object ListenerService : Listener
     @EventHandler
     fun PlayerDeathEvent.on()
     {
-        entity.profile.state = PlayerState.Spawn
+        deathMessage =
+            "${CC.RED}${entity.name} was killed by ${entity.killer?.name}!"
+
+        entity.profile.apply {
+            state = PlayerState.Spawn
+            deaths += 1
+            save()
+        }
+
+        entity.killer?.apply {
+            profile.kills += 1
+            profile.save()
+        }
     }
 
     @EventHandler
