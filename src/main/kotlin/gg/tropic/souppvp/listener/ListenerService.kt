@@ -7,6 +7,7 @@ import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.profile.*
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.local.CombatTag
+import gg.tropic.souppvp.profile.local.RefillStationCooldown
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.terminable.composite.CompositeTerminable
@@ -182,11 +183,13 @@ object ListenerService : Listener
 
                 if (sign.getLine(0).isNotEmpty())
                 {
-                    if (player.hasMetadata("refill"))
-                    {
-                        player.sendMessage("${CC.RED}Try using the refill station again in 30 seconds!")
-                        return
-                    }
+                    player.extract<RefillStationCooldown>("refill")
+                        ?.apply {
+                            player.sendMessage(
+                                "${CC.RED}You're on cooldown. You can refill again in $expectedEndFormat!"
+                            )
+                            return
+                        }
 
                     val terminable = CompositeTerminable.create()
                     terminable.with {
@@ -199,14 +202,17 @@ object ListenerService : Listener
                     player.setMetadata(
                         "refill",
                         FixedMetadataValue(
-                            plugin, terminable
+                            plugin,
+                            RefillStationCooldown(
+                                terminable = terminable,
+                                expectedEnd = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30L)
+                            )
                         )
                     )
 
                     Events
                         .subscribe(PlayerQuitEvent::class.java)
                         .handler {
-                            // TODO: logged out while in combat?
                             terminable.closeAndReportException()
                         }
                         .bindWith(terminable)
