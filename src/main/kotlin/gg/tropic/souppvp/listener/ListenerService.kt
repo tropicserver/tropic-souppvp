@@ -36,9 +36,10 @@ object ListenerService : Listener
             "${CC.RED}${entity.name} was killed by ${entity.killer?.name}!"
 
         entity.profile.apply {
-            state = PlayerState.Spawn
             deaths += 1
             save()
+
+            state = PlayerState.Spawn
         }
 
         entity.killer?.apply {

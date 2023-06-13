@@ -7,6 +7,6 @@ import java.util.UUID
  * @since 6/13/2023
  */
 data class LeaderboardResult(
-    val id: UUID,
+    val _id: UUID,
     val value: Double
 )

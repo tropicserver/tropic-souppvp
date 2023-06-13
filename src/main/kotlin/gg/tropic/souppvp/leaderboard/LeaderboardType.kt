@@ -24,22 +24,13 @@ fun aggregateFieldSortedDescending(field: String) =
     )
 
 enum class LeaderboardType(
-    val field: String,
-    val aggregate: () -> List<Document>
+    val aggregate: List<Document>
 )
 {
-    Kills("kills") {
-        aggregateFieldSortedDescending(field)
-    },
-    Deaths("deaths") {
-        aggregateFieldSortedDescending(field)
-    },
-    Balances("coins") {
-        aggregateFieldSortedDescending(field)
-    },
-    Consumed_Soup("soupsConsumed") {
-        aggregateFieldSortedDescending(field)
-    };
+    Kills(aggregateFieldSortedDescending("kills")),
+    Deaths(aggregateFieldSortedDescending("deaths")),
+    Balances(aggregateFieldSortedDescending("coins")),
+    Consumed_Soup(aggregateFieldSortedDescending("soupsConsumed"));
 
     /**
      * This is sorta ghetto but too lazy right now
