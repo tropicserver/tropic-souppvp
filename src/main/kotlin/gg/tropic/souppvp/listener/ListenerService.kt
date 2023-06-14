@@ -463,6 +463,8 @@ object ListenerService : Listener
         val player = profile.player()
         player.refresh(GameMode.ADVENTURE)
 
+        abilityCooldownCache.remove(player.uniqueId)
+
         hotbarMappings.entries
             .forEach {
                 player.inventory.setItem(it.value.second, it.key)

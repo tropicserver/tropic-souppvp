@@ -33,9 +33,6 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
         lines += "${CC.WHITE}Deaths: ${CC.PRI}${profile.deaths}"
         lines += "${CC.WHITE}KDR: ${CC.PRI}${profile.kdrFormat}"
         lines += "${CC.WHITE}Kill streak: ${CC.PRI}${profile.killStreak} ${CC.GRAY}(${profile.maxKillStreak})"
-        lines += ""
-        lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
-        lines += "${CC.WHITE}XP: ${CC.GREEN}${Numbers.format(profile.experience)}"
 
         profile.bounty
             ?.apply {
@@ -43,6 +40,11 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
                 lines += "${CC.GREEN}Bounty:"
                 lines += "${CC.WHITE}Contributors: ${CC.GREEN}${contributors.size}"
                 lines += "${CC.WHITE}Total: ${CC.GOLD}$amount $coinIcon"
+            }
+            ?: run {
+                lines += ""
+                lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
+                lines += "${CC.WHITE}XP: ${CC.GREEN}${Numbers.format(profile.experience)}"
             }
 
         player
