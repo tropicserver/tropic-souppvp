@@ -175,10 +175,13 @@ object ListenerService : Listener
 
     private fun startCombatTag(player: Player)
     {
-        if (player.hasMetadata("combat"))
-        {
-            return
-        }
+        var tagReactivation = false
+        player
+            .extract<CombatTag>("combat")
+            ?.apply {
+                tagReactivation = true
+                terminable.closeAndReportException()
+            }
 
         val terminable = CompositeTerminable.create()
         terminable.with {
@@ -197,15 +200,11 @@ object ListenerService : Listener
                 )
             )
         )
-        player.sendMessage("${CC.RED}You are now combat-tagged!")
 
-        Events
-            .subscribe(PlayerQuitEvent::class.java)
-            .handler {
-                // TODO: logged out while in combat?
-                terminable.closeAndReportException()
-            }
-            .bindWith(terminable)
+        if (!tagReactivation)
+        {
+            player.sendMessage("${CC.RED}You are now combat-tagged!")
+        }
 
         Schedulers
             .async()
@@ -239,6 +238,31 @@ object ListenerService : Listener
 
             player.velocity = vector
         }
+    }
+
+    @EventHandler
+    fun PlayerQuitEvent.on()
+    {
+        player
+            .extract<CombatTag>("combat")
+            ?.apply {
+                player.profile.apply {
+                    deaths += 1
+
+                    if (killStreak > 0)
+                    {
+                        killStreak = 0
+                    }
+                }
+
+                terminable.closeAndReportException()
+            }
+
+        player
+            .extract<RefillStationCooldown>("refill")
+            ?.apply {
+                terminable.closeAndReportException()
+            }
     }
 
     @EventHandler
@@ -286,7 +310,6 @@ object ListenerService : Listener
             return
         }
 
-        // TODO: player tps in? player enderpeals in?
         if (
             !config.spawnZone.cuboid.contains(from) &&
             config.spawnZone.cuboid.contains(to)
@@ -522,7 +545,8 @@ object ListenerService : Listener
 
                 if (sign.getLine(0).isNotEmpty())
                 {
-                    player.extract<RefillStationCooldown>("refill")
+                    player
+                        .extract<RefillStationCooldown>("refill")
                         ?.apply {
                             player.sendMessage(
                                 "${CC.RED}You're on cooldown. You can refill again in ${expectedEndFormat}s!"
@@ -548,13 +572,6 @@ object ListenerService : Listener
                             )
                         )
                     )
-
-                    Events
-                        .subscribe(PlayerQuitEvent::class.java)
-                        .handler {
-                            terminable.closeAndReportException()
-                        }
-                        .bindWith(terminable)
 
                     Schedulers
                         .async()
