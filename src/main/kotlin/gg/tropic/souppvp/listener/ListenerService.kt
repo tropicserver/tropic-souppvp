@@ -1,11 +1,9 @@
 package gg.tropic.souppvp.listener
 
 import com.google.common.cache.CacheBuilder
-import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.lemon.util.task.DiminutionRunnable
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.KitMenu
@@ -55,6 +53,27 @@ object ListenerService : Listener
 {
     @Inject
     lateinit var plugin: TropicSoupPlugin
+
+    private val abilityMeta = "${CC.WHITE}[ability]"
+
+    private val soup = ItemStack(Material.MUSHROOM_SOUP)
+    private val inventoryContents = mutableListOf<ItemStack>()
+        .apply {
+            repeat(27) {
+                add(soup)
+            }
+        }
+
+    private val hotbarMappings = mutableMapOf(
+        ItemBuilder
+            .of(Material.FIREBALL)
+            .name("${CC.GREEN}Select a Kit")
+            .build()
+            to
+            ({ player: Player ->
+                KitMenu().openMenu(player)
+            } to 0)
+    )
 
     private val fallDamageInvincibilityCache = CacheBuilder
         .newBuilder()
@@ -361,10 +380,34 @@ object ListenerService : Listener
     @EventHandler
     fun PlayerDropItemEvent.on()
     {
-        // TODO: possibly unwanted logic?
         if (player.profile.state == PlayerState.Spawn)
         {
             isCancelled = true
+            return
+        }
+
+        if (itemDrop.itemStack.type == Material.BOWL)
+        {
+            Schedulers
+                .sync()
+                .runLater({
+                    itemDrop.remove()
+                }, 1L)
+            return
+        }
+
+        if (itemDrop.itemStack.type.name.contains("SWORD"))
+        {
+            isCancelled = true
+            return
+        }
+
+        val lore = itemDrop.itemStack.itemMeta.lore
+
+        if (lore.isNotEmpty() && lore.last() == abilityMeta)
+        {
+            isCancelled = true
+            return
         }
     }
 
@@ -441,25 +484,6 @@ object ListenerService : Listener
             profile.identifier, profile.identifier
         )
     }
-
-    private val soup = ItemStack(Material.MUSHROOM_SOUP)
-    private val inventoryContents = mutableListOf<ItemStack>()
-        .apply {
-            repeat(27) {
-                add(soup)
-            }
-        }
-
-    private val hotbarMappings = mutableMapOf(
-        ItemBuilder
-            .of(Material.FIREBALL)
-            .name("${CC.GREEN}Select a Kit")
-            .build()
-            to
-            ({ player: Player ->
-                KitMenu().openMenu(player)
-            } to 0)
-    )
 
     @EventHandler
     fun PlayerInteractEvent.on()

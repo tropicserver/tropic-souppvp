@@ -69,8 +69,12 @@ object StatisticsCommand : ScalaCommand()
             "${CC.SEC}Kills: ${CC.GREEN}$kills",
             "${CC.SEC}Deaths: ${CC.RED}$deaths",
             "${CC.SEC}KDR: ${CC.D_AQUA}$kdrFormat",
-            "",
             "${CC.SEC}Consumed soups: ${CC.AQUA}$soupsConsumed",
-            "${CC.SEC}Balance: ${CC.GOLD}$coins $coinIcon"
+            "",
+            "${CC.SEC}Balance: ${CC.GOLD}$coins $coinIcon",
+            "",
+            "${CC.D_GREEN}Kill streak:",
+            "${CC.SEC}Current: ${CC.D_GREEN}$killStreak",
+            "${CC.SEC}Highest: ${CC.D_GREEN}$maxKillStreak"
         )
 }
