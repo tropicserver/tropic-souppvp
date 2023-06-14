@@ -3,6 +3,7 @@ package gg.tropic.souppvp.listener
 import com.google.common.cache.CacheBuilder
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
+import gg.scala.flavor.service.Configure
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.profile.*
@@ -24,17 +25,27 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockExplodeEvent
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.FoodLevelChangeEvent
+import org.bukkit.event.entity.ItemDespawnEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryType
+import org.bukkit.event.player.PlayerBedEnterEvent
+import org.bukkit.event.player.PlayerBucketEmptyEvent
+import org.bukkit.event.player.PlayerBucketFillEvent
+import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.PlayerPortalEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -51,6 +62,29 @@ object ListenerService : Listener
         .newBuilder()
         .expireAfterWrite(5L, TimeUnit.SECONDS)
         .build<UUID, UUID>()
+
+    @Configure
+    fun configure()
+    {
+        listOf(
+            BlockBreakEvent::class.java,
+            BlockPlaceEvent::class.java,
+            FoodLevelChangeEvent::class.java,
+            PlayerBedEnterEvent::class.java,
+            PlayerPortalEvent::class.java,
+            PlayerFishEvent::class.java,
+            PlayerBucketFillEvent::class.java,
+            PlayerBucketEmptyEvent::class.java,
+            BlockExplodeEvent::class.java
+        ).forEach {
+            Events
+                .subscribe(it)
+                .handler { event ->
+                    event.isCancelled = true
+                }
+                .bindWith(plugin)
+        }
+    }
 
     @EventHandler
     fun PlayerJoinEvent.on()
@@ -240,6 +274,12 @@ object ListenerService : Listener
     @EventHandler
     fun EntityDamageEvent.onFall()
     {
+        if (cause == EntityDamageEvent.DamageCause.DROWNING)
+        {
+            isCancelled = true
+            return
+        }
+
         if (
             entity is Player &&
             cause == EntityDamageEvent.DamageCause.FALL &&
@@ -283,6 +323,18 @@ object ListenerService : Listener
     @EventHandler
     fun PlayerInteractEvent.on()
     {
+        if (action == Action.RIGHT_CLICK_AIR)
+        {
+            if (player.itemInHand.type == Material.MUSHROOM_SOUP && player.health < 19.5)
+            {
+                player.health = (player.health + 7.0).coerceAtMost(20.0)
+                player.itemInHand.type = Material.BOWL
+                player.updateInventory()
+            }
+
+            return
+        }
+
         if (action == Action.RIGHT_CLICK_BLOCK)
         {
             if (clickedBlock.type == Material.WALL_SIGN)
