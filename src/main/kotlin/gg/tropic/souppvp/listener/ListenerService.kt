@@ -274,6 +274,15 @@ object ListenerService : Listener
     @EventHandler
     fun EntityDamageEvent.onFall()
     {
+        if (
+            entity is Player &&
+            (entity as Player).profile.state == PlayerState.Spawn
+        )
+        {
+            isCancelled = true
+            return
+        }
+
         if (cause == EntityDamageEvent.DamageCause.DROWNING)
         {
             isCancelled = true
