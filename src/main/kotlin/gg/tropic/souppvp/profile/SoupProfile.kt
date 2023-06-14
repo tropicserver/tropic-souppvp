@@ -3,6 +3,7 @@ package gg.tropic.souppvp.profile
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
+import gg.tropic.souppvp.kit.Kit
 import gg.tropic.souppvp.profile.bounty.Bounty
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import org.bukkit.Bukkit
@@ -21,11 +22,14 @@ data class SoupProfile(
     /**
      * Set of perk class names.
      */
-    val ownedPerks: Set<String> = mutableSetOf(),
-    val ownedKits: Set<String> = mutableSetOf()
+    val ownedPerks: MutableSet<String> = mutableSetOf(),
+    val ownedKits: MutableSet<String> = mutableSetOf()
 ) : IDataStoreObject
 {
     var bounty: Bounty? = null
+    var previouslyChosenKit: String? = null
+
+    fun owns(kit: Kit) = ownedKits.contains(kit.id)
 
     @Transient
     internal var backingState = PlayerState.Loading
