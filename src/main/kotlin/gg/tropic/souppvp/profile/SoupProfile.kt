@@ -43,6 +43,13 @@ data class SoupProfile(
             ).callEvent()
         }
 
+    val kdr: Float
+        get() = if (deaths == 0)
+            0.0f else kills / deaths.toFloat()
+
+    val kdrFormat: String
+        get() = "%.2f".format(kdr)
+
     fun player() = Bukkit.getPlayer(identifier)!!
 
     fun save() = DataStoreObjectControllerCache

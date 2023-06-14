@@ -30,6 +30,8 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
         lines += ""
         lines += "${CC.WHITE}Kills: ${CC.GOLD}${profile.kills}"
         lines += "${CC.WHITE}Deaths: ${CC.GOLD}${profile.deaths}"
+        lines += "${CC.WHITE}KDR: ${CC.GOLD}${profile.kdrFormat}"
+        lines += ""
         lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
 
         profile.bounty

@@ -55,6 +55,8 @@ object StatisticsCommand : ScalaCommand()
         player.sendMessage(
             "${CC.SEC}Kills: ${CC.GREEN}$kills",
             "${CC.SEC}Deaths: ${CC.RED}$deaths",
+            "${CC.SEC}KDR: ${CC.D_AQUA}$kdrFormat",
+            "",
             "${CC.SEC}Consumed soups: ${CC.AQUA}$soupsConsumed",
             "${CC.SEC}Balance: ${CC.GOLD}$coins $coinIcon"
         )
