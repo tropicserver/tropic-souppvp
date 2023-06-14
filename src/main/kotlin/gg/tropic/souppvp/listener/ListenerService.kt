@@ -348,6 +348,10 @@ object ListenerService : Listener
             if (profile.maxKillStreak < profile.killStreak)
             {
                 profile.maxKillStreak = profile.killStreak
+
+                sendMessage(
+                    "${CC.GREEN}You have a new highest killstreak of: ${CC.WHITE}${profile.maxKillStreak}${CC.GREEN}!"
+                )
             }
 
             profile.save()
