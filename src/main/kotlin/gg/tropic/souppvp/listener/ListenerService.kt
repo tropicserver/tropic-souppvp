@@ -7,6 +7,7 @@ import gg.scala.flavor.service.Service
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.KitMenu
+import gg.tropic.souppvp.kit.ability.AbilityService
 import gg.tropic.souppvp.profile.*
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.local.CombatTag
@@ -19,6 +20,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.math.Numbers
+import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -54,8 +56,6 @@ object ListenerService : Listener
     @Inject
     lateinit var plugin: TropicSoupPlugin
 
-    private val abilityMeta = "${CC.WHITE}[ability]"
-
     private val soup = ItemStack(Material.MUSHROOM_SOUP)
     private val inventoryContents = mutableListOf<ItemStack>()
         .apply {
@@ -63,6 +63,8 @@ object ListenerService : Listener
                 add(soup)
             }
         }
+
+    private val abilityCooldownCache = mutableMapOf<UUID, Long>()
 
     private val hotbarMappings = mutableMapOf(
         ItemBuilder
@@ -306,7 +308,7 @@ object ListenerService : Listener
         )
         {
             player.profile.state = PlayerState.Warzone
-            player.sendMessage("going to warzone")
+            player.sendMessage("${CC.GREEN}You entered the warzone. You are no longer invincible.")
             return
         }
 
@@ -316,7 +318,6 @@ object ListenerService : Listener
         )
         {
             player.profile.state = PlayerState.Spawn
-            player.sendMessage("going to spawn")
             return
         }
     }
@@ -331,7 +332,7 @@ object ListenerService : Listener
         deathMessage =
             "${CC.GREEN}${entity.name}${CC.GRAY} was killed${
                 if (entity.killer != null) " by ${CC.GREEN}${entity.killer?.name}" else ""
-            }${CC.GRAY}!"
+            }${CC.GRAY}."
 
         entity.profile.apply {
             deaths += 1
@@ -429,9 +430,18 @@ object ListenerService : Listener
             return
         }
 
+        if (!itemDrop.itemStack.hasItemMeta())
+        {
+            return
+        }
+
         val lore = itemDrop.itemStack.itemMeta.lore
 
-        if (lore.isNotEmpty() && lore.last() == abilityMeta)
+        if (
+            lore != null &&
+            lore.isNotEmpty() &&
+            lore.last() == AbilityService.abilityMetaKey
+        )
         {
             isCancelled = true
             return
@@ -534,6 +544,39 @@ object ListenerService : Listener
                 player.itemInHand.type = Material.BOWL
                 player.updateInventory()
                 return
+            }
+        }
+
+        if (
+            player.profile.state == PlayerState.Warzone &&
+            item.hasItemMeta() && item.itemMeta.hasLore()
+        )
+        {
+            val lore = item.itemMeta.lore
+
+            if (lore.isNotEmpty() && lore.last() == AbilityService.abilityMetaKey)
+            {
+                abilityCooldownCache[player.uniqueId]
+                    ?.apply {
+                        if (System.currentTimeMillis() < this)
+                        {
+                            player.sendMessage("${CC.RED}Please wait ${CC.B_RED}${
+                                TimeUtil.formatIntoAbbreviatedString((this - System.currentTimeMillis()).toInt() / 1000)
+                            }${CC.RED} before using this again!")
+                            return
+                        }
+                    }
+
+                val similar = AbilityService
+                    .mappings.values
+                    .firstOrNull {
+                        it.deployed.isSimilar(item)
+                    }
+                    ?: return
+
+                similar.use(player, item)
+                abilityCooldownCache[player.uniqueId] =
+                    System.currentTimeMillis() + similar.cooldown.toMillis()
             }
         }
 

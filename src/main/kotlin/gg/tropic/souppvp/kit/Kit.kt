@@ -1,11 +1,13 @@
 package gg.tropic.souppvp.kit
 
+import gg.tropic.souppvp.kit.ability.AbilityService
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -16,7 +18,7 @@ class Kit(
     var enabled: Boolean = true,
     var displayName: String = id
         .lowercase()
-        .capitalize(),
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
     var item: ItemStack = ItemBuilder
         .of(Material.PAPER)
         .build(),
@@ -35,23 +37,6 @@ class Kit(
     val potionEffects: MutableList<PotionEffect> = mutableListOf()
 )
 {
-    companion object
-    {
-        private val abilityMetaKey = "${CC.WHITE}[ability]"
-
-        fun buildAbilityItem(name: String) = ItemBuilder
-            .of(Material.MONSTER_EGG)
-            .name(abilityMetaKey)
-            .addToLore(name)
-            .build()
-
-        fun isAbilityItem(itemStack: ItemStack) =
-            itemStack.itemMeta.displayName == abilityMetaKey
-
-        fun exportAbilityFromItem(item: ItemStack) =
-            item.itemMeta.lore.first()
-    }
-
     fun applyTo(player: Player)
     {
         player.inventory.contents = contents
@@ -61,14 +46,22 @@ class Kit(
             player.addPotionEffect(it, true)
         }
 
-        // TODO: actually apply it
-        /*abilitySlots
+        abilitySlots
             .forEach { (t, u) ->
+                val mapping = AbilityService.mappings[u]
+                    ?: return@forEach
+
                 player.inventory.setItem(
                     t,
-                    buildAbilityItem(u)
+                    ItemBuilder
+                        .copyOf(mapping.item)
+                        .addToLore(
+                            "",
+                            AbilityService.abilityMetaKey
+                        )
+                        .build()
                 )
-            }*/
+            }
 
         player.updateInventory()
     }

@@ -12,6 +12,7 @@ import gg.scala.lemon.player.LemonPlayer
 import gg.tropic.souppvp.config.LocalZone
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.Kit
+import gg.tropic.souppvp.kit.ability.AbilityService
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.menu.menus.TextEditorMenu
@@ -170,7 +171,7 @@ object AdminCommands : ScalaCommand()
     fun onAbilityGive(player: ScalaPlayer, ability: String)
     {
         player.bukkit().inventory.addItem(
-            Kit.buildAbilityItem(ability)
+            AbilityService.buildAbilityItem(ability)
         )
     }
 
@@ -222,7 +223,7 @@ object AdminCommands : ScalaCommand()
                 .forEach { (t, u) ->
                     bukkit.inventory.setItem(
                         t,
-                        Kit.buildAbilityItem(u)
+                        AbilityService.buildAbilityItem(u)
                     )
                 }
 
@@ -236,7 +237,7 @@ object AdminCommands : ScalaCommand()
             val bukkit = player.bukkit()
             kit.contents = bukkit.inventory.contents
                 .filterNot {
-                    Kit.isAbilityItem(it)
+                    AbilityService.isAbilityItem(it)
                 }
                 .toTypedArray()
 
@@ -246,9 +247,9 @@ object AdminCommands : ScalaCommand()
 
             bukkit.inventory.contents
                 .forEachIndexed { index, itemStack ->
-                    if (Kit.isAbilityItem(itemStack))
+                    if (AbilityService.isAbilityItem(itemStack))
                     {
-                        kit.abilitySlots[index] = Kit
+                        kit.abilitySlots[index] = AbilityService
                             .exportAbilityFromItem(itemStack)
                     }
                 }
