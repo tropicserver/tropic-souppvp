@@ -329,6 +329,10 @@ object ListenerService : Listener
             it.type != Material.MUSHROOM_SOUP
         }
 
+        val soup = drops.take(18)
+        drops.clear()
+        drops += soup
+
         deathMessage =
             "${CC.GREEN}${entity.name}${CC.GRAY} was killed${
                 if (entity.killer != null) " by ${CC.GREEN}${entity.killer?.name}" else ""
