@@ -110,7 +110,7 @@ object ListenerService : Listener
                 override fun onRun()
                 {
                     Bukkit.broadcastMessage(
-                        "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items clear in ${CC.WHITE}$seconds${CC.GRAY} seconds."
+                        "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items will be doing the clearing process in ${CC.WHITE}$seconds${CC.GRAY} seconds. Please make sure to look at the seatbelt sign and make sure to sit at your seats. Continue to not smoke throughout the final period of the flight. Thank you for fliying Ice resurfacer airliins. It is 45 degrees at tropicland."
                     )
                 }
             }
@@ -138,6 +138,7 @@ object ListenerService : Listener
 
         if ((damager as Player).profile.state == PlayerState.Spawn)
         {
+            isCancelled = true
             return
         }
 
