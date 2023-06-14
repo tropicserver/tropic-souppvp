@@ -31,18 +31,9 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
-import org.bukkit.event.entity.ItemDespawnEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryType
-import org.bukkit.event.player.PlayerBedEnterEvent
-import org.bukkit.event.player.PlayerBucketEmptyEvent
-import org.bukkit.event.player.PlayerBucketFillEvent
-import org.bukkit.event.player.PlayerFishEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerMoveEvent
-import org.bukkit.event.player.PlayerPortalEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
@@ -224,6 +215,7 @@ object ListenerService : Listener
             save()
 
             state = PlayerState.Spawn
+            entity.teleport(config.spawn)
         }
 
         entity.extract<CombatTag>("combat")
