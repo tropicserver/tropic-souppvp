@@ -113,9 +113,7 @@ object ListenerService : Listener
                         "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items clear in ${CC.WHITE}$seconds${CC.GRAY} seconds."
                     )
                 }
-            }.runTaskTimerAsynchronously(
-                plugin, 0L, 20L
-            )
+            }
         }
 
         startGroundClearRunnable()
@@ -284,9 +282,9 @@ object ListenerService : Listener
         }
 
         deathMessage =
-            "${CC.GREEN}${entity.name}${CC.SEC} was killed${
-                if (entity.killer != null) "by ${CC.GREEN}${entity.killer?.name}" else ""
-            }!"
+            "${CC.GREEN}${entity.name}${CC.SEC} was fucked${
+                if (entity.killer != null) " by ${CC.GREEN}${entity.killer?.name}" else ""
+            }${CC.SEC}!"
 
         entity.profile.apply {
             deaths += 1

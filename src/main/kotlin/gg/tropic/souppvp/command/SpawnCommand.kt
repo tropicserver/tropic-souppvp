@@ -9,8 +9,10 @@ import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
+import gg.tropic.souppvp.profile.PlayerState
 import gg.tropic.souppvp.profile.extract
 import gg.tropic.souppvp.profile.local.CombatTag
+import gg.tropic.souppvp.profile.profile
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.event.filter.EventFilters
@@ -48,6 +50,13 @@ object SpawnCommand : ScalaCommand()
     @CommandAlias("spawn")
     fun onSpawn(player: ScalaPlayer)
     {
+        if (player.profile.state == PlayerState.Spawn)
+        {
+            throw ConditionFailedException(
+                "You are already at spawn!"
+            )
+        }
+
         if (player.bukkit().hasMetadata("spawn"))
         {
             throw ConditionFailedException(
@@ -97,7 +106,7 @@ object SpawnCommand : ScalaCommand()
         Events
             .subscribe(PlayerMoveEvent::class.java)
             .filter {
-                EventFilters
+                !EventFilters
                     .ignoreSameBlockAndY<PlayerMoveEvent>()
                     .test(it)
             }
