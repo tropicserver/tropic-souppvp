@@ -35,6 +35,7 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
         lines += "${CC.WHITE}Kill streak: ${CC.PRI}${profile.killStreak} ${CC.GRAY}(${profile.maxKillStreak})"
         lines += ""
         lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
+        lines += "${CC.WHITE}XP: ${CC.GREEN}${Numbers.format(profile.experience)}"
 
         profile.bounty
             ?.apply {

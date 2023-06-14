@@ -339,8 +339,8 @@ object ListenerService : Listener
 
             if (killStreak > 0)
             {
-                killStreak = 0
                 entity.sendMessage("${CC.RED}You lost your streak of $killStreak kills!")
+                killStreak = 0
             }
 
             save()

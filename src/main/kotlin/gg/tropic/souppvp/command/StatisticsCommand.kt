@@ -72,6 +72,7 @@ object StatisticsCommand : ScalaCommand()
             "${CC.SEC}Consumed soups: ${CC.AQUA}$soupsConsumed",
             "",
             "${CC.SEC}Balance: ${CC.GOLD}$coins $coinIcon",
+            "${CC.SEC}XP: ${CC.GREEN}$experience",
             "",
             "${CC.D_GREEN}Kill streak:",
             "${CC.SEC}Current: ${CC.D_GREEN}$killStreak",
