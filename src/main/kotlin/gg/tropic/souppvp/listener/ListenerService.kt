@@ -549,6 +549,7 @@ object ListenerService : Listener
 
         if (
             player.profile.state == PlayerState.Warzone &&
+            action == Action.RIGHT_CLICK_AIR &&
             item.hasItemMeta() && item.itemMeta.hasLore()
         )
         {
