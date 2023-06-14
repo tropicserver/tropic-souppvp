@@ -103,12 +103,17 @@ object SpawnCommand : ScalaCommand()
             }, 0L, 20L)
             .bindWith(composite)
 
+        val id = player.uniqueId
+
         Events
             .subscribe(PlayerMoveEvent::class.java)
             .filter {
                 EventFilters
                     .ignoreSameBlockAndY<PlayerMoveEvent>()
                     .test(it)
+            }
+            .filter {
+                it.player.uniqueId == id
             }
             .handler {
                 composite.closeAndReportException()
