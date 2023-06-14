@@ -95,7 +95,6 @@ object ListenerService : Listener
             FoodLevelChangeEvent::class.java,
             PlayerBedEnterEvent::class.java,
             PlayerPortalEvent::class.java,
-            PlayerFishEvent::class.java,
             PlayerBucketFillEvent::class.java,
             PlayerBucketEmptyEvent::class.java,
             BlockExplodeEvent::class.java

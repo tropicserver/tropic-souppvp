@@ -167,6 +167,17 @@ object AdminCommands : ScalaCommand()
             )
         }
 
+    @Subcommand("kit delete")
+    fun onKitCreate(player: ScalaPlayer, kit: Kit) =
+        with(config) {
+            config.kits.remove(kit.id.lowercase())
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Deleted kit: ${CC.WHITE}${kit.id}${CC.GREEN}."
+            )
+        }
+
     @Subcommand("ability give")
     fun onAbilityGive(player: ScalaPlayer, ability: String)
     {
@@ -184,6 +195,16 @@ object AdminCommands : ScalaCommand()
 
             player.sendMessage(
                 "${CC.GREEN}Display is now: ${CC.WHITE}$displayName${CC.GREEN}."
+            )
+        }
+
+    @Subcommand("kit abilities")
+    @CommandCompletion("@kits")
+    fun onKitAbilities(player: ScalaPlayer, kit: Kit) =
+        with(config) {
+            player.sendMessage(
+                "${CC.GREEN}abilties : ${
+                    kit.abilitySlots.values.joinToString(", ")}"
             )
         }
 
@@ -237,7 +258,7 @@ object AdminCommands : ScalaCommand()
             val bukkit = player.bukkit()
             kit.contents = bukkit.inventory.contents
                 .filterNot {
-                    AbilityService.isAbilityItem(it)
+                    it == null || AbilityService.isAbilityItem(it)
                 }
                 .toTypedArray()
 
@@ -246,6 +267,7 @@ object AdminCommands : ScalaCommand()
             kit.abilitySlots.clear()
 
             bukkit.inventory.contents
+                .filterNotNull()
                 .forEachIndexed { index, itemStack ->
                     if (AbilityService.isAbilityItem(itemStack))
                     {

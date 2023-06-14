@@ -57,6 +57,15 @@ class Kit(
                 )
             }
 
+        if (37 - contents.size > 0)
+        {
+            repeat(37 - contents.size) {
+                player.inventory.addItem(
+                    ItemStack(Material.MUSHROOM_SOUP)
+                )
+            }
+        }
+
         player.updateInventory()
     }
 }

@@ -15,7 +15,7 @@ import gg.tropic.souppvp.kit.ability.AbilityService
  * @since 6/12/2023
  */
 @Plugin(
-    name = "slinky",
+    name = "SoupPvP",
     version = "%remote%/%branch%/%id%"
 )
 

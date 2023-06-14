@@ -21,7 +21,8 @@ class KitMenu : PaginatedMenu()
     {
         val slots = mutableListOf(
             10, 11, 12, 13, 14, 15, 16,
-            19, 20, 21, 22, 23, 24, 25
+            19, 20, 21, 22, 23, 24, 25,
+            19 + 9, 20 + 9, 21 + 9, 22 + 9, 23 + 9, 24 + 9, 25 + 9,
         )
     }
 
@@ -70,6 +71,9 @@ class KitMenu : PaginatedMenu()
                             if (profile.owns(it) || it.cost == 0.0)
                             {
                                 profile.previouslyChosenKit = it.id
+                                profile.save()
+
+                                player.sendMessage("${CC.GREEN}You have selected the ${CC.PRI}${it.displayName}${CC.GREEN} kit!")
                                 player.closeInventory()
                             } else
                             {
@@ -98,13 +102,14 @@ class KitMenu : PaginatedMenu()
                                     {
                                         openMenu(player)
                                     }
-                                }
+                                }.openMenu(player)
                             }
                         }
                 }
         }
 
-    override fun size(buttons: Map<Int, Button>) = 36
+    override fun size(buttons: Map<Int, Button>) = 45
+    override fun getMaxItemsPerPage(player: Player) = 21
 
     override fun getAllPagesButtonSlots() = slots
     override fun getPrePaginatedTitle(player: Player) = "Select a kit"
