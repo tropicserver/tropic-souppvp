@@ -10,12 +10,14 @@ import gg.tropic.souppvp.profile.local.CombatTag
 import gg.tropic.souppvp.profile.local.RefillStationCooldown
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
+import me.lucko.helper.event.filter.EventFilters
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
 import org.bukkit.block.Sign
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -26,6 +28,7 @@ import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
@@ -108,6 +111,31 @@ object ListenerService : Listener
                 terminable.closeAndReportException()
             }, 15L, TimeUnit.SECONDS)
             .bindWith(terminable)
+    }
+
+    @EventHandler
+    fun PlayerMoveEvent.on()
+    {
+        if (
+            !EventFilters
+                .ignoreSameBlockAndY<PlayerMoveEvent>()
+                .test(this)
+        )
+        {
+            return
+        }
+
+        val block = player.location.block
+            .getRelative(BlockFace.DOWN)
+
+        if (block.type == Material.SPONGE)
+        {
+            val vector = player.location.direction
+                .multiply(3.5)
+                .setY(1.05)
+
+            player.velocity = vector
+        }
     }
 
     @EventHandler
