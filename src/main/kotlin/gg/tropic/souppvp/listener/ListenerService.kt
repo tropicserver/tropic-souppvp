@@ -5,6 +5,7 @@ import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.util.task.DiminutionRunnable
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.KitMenu
@@ -26,6 +27,7 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Sign
+import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -81,6 +83,42 @@ object ListenerService : Listener
                 }
                 .bindWith(plugin)
         }
+
+        fun startGroundClearRunnable()
+        {
+            object : DiminutionRunnable(60 * 3)
+            {
+                override fun getSeconds() = listOf(30, 5, 4, 3, 2, 1)
+
+                override fun onEnd()
+                {
+                    Bukkit.getWorlds()
+                        .forEach {
+                            it.entities
+                                .filterIsInstance<Item>()
+                                .forEach { entity ->
+                                    entity.remove()
+                                }
+                        }
+
+                    startGroundClearRunnable()
+                    Bukkit.broadcastMessage(
+                        "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items have been cleared!"
+                    )
+                }
+
+                override fun onRun()
+                {
+                    Bukkit.broadcastMessage(
+                        "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items clear in ${CC.WHITE}$seconds${CC.GRAY} seconds."
+                    )
+                }
+            }.runTaskTimerAsynchronously(
+                plugin, 0L, 20L
+            )
+        }
+
+        startGroundClearRunnable()
     }
 
     @EventHandler
