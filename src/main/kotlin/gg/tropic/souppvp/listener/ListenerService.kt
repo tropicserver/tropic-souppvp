@@ -99,6 +99,11 @@ object ListenerService : Listener
             return
         }
 
+        if ((damager as Player).profile.state == PlayerState.Spawn)
+        {
+            return
+        }
+
         val player = entity
         if (player is Player)
         {
