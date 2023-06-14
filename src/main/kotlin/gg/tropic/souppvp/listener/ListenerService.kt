@@ -357,30 +357,29 @@ object ListenerService : Listener
     @EventHandler
     fun PlayerInteractEvent.on()
     {
-        if (player.profile.state == PlayerState.Spawn)
+        if (
+            action == Action.RIGHT_CLICK_AIR ||
+            action == Action.RIGHT_CLICK_BLOCK &&
+            clickedBlock == null
+        )
         {
-            if (action == Action.RIGHT_CLICK_AIR)
+            if (player.profile.state == PlayerState.Spawn)
             {
                 hotbarMappings.entries
                     .firstOrNull {
                         it.key.isSimilar(item)
                     }
                     ?.value?.first?.invoke(player)
+                return
             }
 
-            return
-        }
-
-        if (action == Action.RIGHT_CLICK_AIR)
-        {
             if (player.itemInHand.type == Material.MUSHROOM_SOUP && player.health < 19.5)
             {
                 player.health = (player.health + 7.0).coerceAtMost(20.0)
                 player.itemInHand.type = Material.BOWL
                 player.updateInventory()
+                return
             }
-
-            return
         }
 
         if (action == Action.RIGHT_CLICK_BLOCK)
