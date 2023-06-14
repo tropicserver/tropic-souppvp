@@ -4,6 +4,7 @@ import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
@@ -72,12 +73,24 @@ class KitMenu : PaginatedMenu()
                                 return@toButton
                             }
 
-                            profile.coins -= it.cost
-                            profile.ownedKits += it.id
-                            profile.save()
+                            ConfirmMenu(
+                                title = "Purchase kit: ${it.displayName}",
+                                extraInfo = emptyList(),
+                                confirm = true
+                            ) { confirmed ->
+                                if (confirmed)
+                                {
+                                    profile.coins -= it.cost
+                                    profile.ownedKits += it.id
+                                    profile.save()
 
-                            player.sendMessage("${CC.GREEN}You purchased the kit: ${CC.WHITE}${it.displayName}")
-                            openMenu(player)
+                                    player.sendMessage("${CC.GREEN}You purchased the kit: ${CC.WHITE}${it.displayName}")
+                                    openMenu(player)
+                                } else
+                                {
+                                    openMenu(player)
+                                }
+                            }
                         }
                     }
             }
