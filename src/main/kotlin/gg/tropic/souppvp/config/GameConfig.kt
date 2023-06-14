@@ -14,7 +14,6 @@ class GameConfig(
     val kits: Map<String, Kit> = mutableMapOf(
         "default" to Kit(id = "default")
     ),
-
     var launchpad: Launchpads = Launchpads(),
     var spawnZone: LocalZone = LocalZone(
         zoneMin = Location(

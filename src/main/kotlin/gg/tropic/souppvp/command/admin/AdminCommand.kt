@@ -6,11 +6,13 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.lemon.player.LemonPlayer
+import gg.tropic.souppvp.config.LocalZone
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.menu.menus.TextEditorMenu
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.entity.Player
 
 /**
@@ -43,6 +45,31 @@ object AdminCommand : ScalaCommand()
             }
     }
 
+    @Subcommand("spawn zone")
+    fun onSpawnZone(player: ScalaPlayer) =
+        with(config) {
+            InputPrompt()
+                .withText("Type when you get to the minimum")
+                .acceptInput { _, _ ->
+                    val minimum = player.bukkit().location
+
+                    InputPrompt()
+                        .withText("Type when you get to the maximum")
+                        .acceptInput { _, _ ->
+                            val maximum = player.bukkit().location
+                            spawnZone = LocalZone(
+                                zoneMin = minimum,
+                                zoneMax = maximum
+                            )
+                            pushUpdates()
+
+                            player.sendMessage("${CC.GREEN}Updated the spawn zone!")
+                        }
+                        .start(player.bukkit())
+                }
+                .start(player.bukkit())
+        }
+
     @Subcommand("launchpad velocity")
     fun onLaunchpadVelocity(player: ScalaPlayer, velocity: Double) =
         with(config) {
@@ -69,8 +96,7 @@ object AdminCommand : ScalaCommand()
             )
         }
 
-    @Subcommand("set-spawn")
-    @Description("Set the server's spawn location.")
+    @Subcommand("spawn set")
     fun onSetSpawn(player: ScalaPlayer) =
         with(config) {
             spawn = player.bukkit().location
