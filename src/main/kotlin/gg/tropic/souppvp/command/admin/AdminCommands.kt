@@ -30,6 +30,34 @@ import org.bukkit.potion.PotionEffectType
 @CommandPermission("soup.command.admin")
 object AdminCommands : ScalaCommand()
 {
+    private val potionEffectRegistry = """
+            SPEED
+            SLOW
+            FAST_DIGGING
+            SLOW_DIGGING
+            INCREASE_DAMAGE
+            HEAL
+            HARM
+            JUMP
+            CONFUSION
+            REGENERATION
+            DAMAGE_RESISTANCE
+            FIRE_RESISTANCE
+            WATER_BREATHING
+            INVISIBILITY
+            BLINDNESS
+            NIGHT_VISION
+            HUNGER
+            WEAKNESS
+            POISON
+            WITHER
+            HEALTH_BOOS
+            ABSORPTION 
+            SATURATION 
+        """.trimIndent()
+        .split("\n")
+        .associateWith { PotionEffectType.getByName(it) }
+
     @CommandManagerCustomizer
     fun customizer(
         manager: ScalaCommandManager
@@ -40,6 +68,26 @@ object AdminCommands : ScalaCommand()
                 "kits"
             ) {
                 config.kits.keys
+            }
+
+        manager.commandCompletions
+            .registerAsyncCompletion(
+                "effects"
+            ) {
+                potionEffectRegistry.keys
+            }
+
+
+        manager.commandContexts
+            .registerContext(
+                PotionEffectType::class.java
+            ) {
+                val arg = it.popFirstArg()
+
+                potionEffectRegistry[arg]
+                    ?: throw ConditionFailedException(
+                        "No potion effect with the ID $arg exists."
+                    )
             }
 
         manager.commandContexts
@@ -233,7 +281,7 @@ object AdminCommands : ScalaCommand()
 
     @CommandCompletion("@kits")
     @Subcommand("kit potioneffect remove")
-    fun onKitToggle(player: ScalaPlayer, kit: Kit, type: PotionEffectType) =
+    fun onPotionEffectRemove(player: ScalaPlayer, kit: Kit, type: PotionEffectType) =
         with(config) {
             kit.potionEffects
                 .removeIf {
@@ -248,7 +296,7 @@ object AdminCommands : ScalaCommand()
 
     @CommandCompletion("@kits")
     @Subcommand("kit potioneffect add")
-    fun onKitToggle(player: ScalaPlayer, kit: Kit, type: PotionEffectType, duration: Int, amplifier: Int) =
+    fun onPotionEffectAdd(player: ScalaPlayer, kit: Kit, type: PotionEffectType, duration: Int, amplifier: Int) =
         with(config) {
             if (kit.potionEffects.any { it.type == type })
             {
