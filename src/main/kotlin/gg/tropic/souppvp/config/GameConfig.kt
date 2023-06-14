@@ -2,6 +2,7 @@ package gg.tropic.souppvp.config
 
 import gg.tropic.souppvp.kit.Kit
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.cuboid.Cuboid
 import org.bukkit.Bukkit
 import org.bukkit.Location
 
@@ -13,10 +14,21 @@ class GameConfig(
     val kits: Map<String, Kit> = mutableMapOf(
         "default" to Kit(id = "default")
     ),
+
     var launchpad: Launchpads = Launchpads(),
+    var spawnZone: LocalZone = LocalZone(
+        zoneMin = Location(
+            Bukkit.getWorlds()[0],
+            -27.5, 66.0, -21.5
+        ),
+        zoneMax = Location(
+            Bukkit.getWorlds()[0],
+            -2.5, 66.0, -45.5
+        )
+    ),
     var spawn: Location = Location(
         Bukkit.getWorlds()[0],
-        0.0, 70.0, 0.0
+        -15.5, 78.0, -33.5
     ),
     var loginMessage: MutableList<String> = mutableListOf(
         "${CC.GRAY}${CC.STRIKE_THROUGH}----------------------------------------",
@@ -34,3 +46,20 @@ data class Launchpads(
     var velocity: Double = 3.5,
     var yMultiplier: Double = 1.05
 )
+
+data class LocalZone(
+    val zoneMin: Location,
+    val zoneMax: Location
+)
+{
+    @Transient
+    private var backingCuboid: Cuboid? = null
+
+    val cuboid: Cuboid
+        get() = if (backingCuboid == null)
+        {
+            backingCuboid = Cuboid(zoneMin, zoneMax)
+            backingCuboid!!
+        } else
+            backingCuboid!!
+}

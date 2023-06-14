@@ -1,5 +1,6 @@
 package gg.tropic.souppvp.listener
 
+import com.google.common.cache.CacheBuilder
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.tropic.souppvp.TropicSoupPlugin
@@ -24,6 +25,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
@@ -32,8 +34,8 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
+import java.util.UUID
 import java.util.concurrent.TimeUnit
-
 
 /**
  * @author GrowlyX
@@ -44,6 +46,11 @@ object ListenerService : Listener
 {
     @Inject
     lateinit var plugin: TropicSoupPlugin
+
+    private val fallDamageInvincibilityCache = CacheBuilder
+        .newBuilder()
+        .expireAfterWrite(5L, TimeUnit.SECONDS)
+        .build<UUID, UUID>()
 
     @EventHandler
     fun PlayerJoinEvent.on()
@@ -139,6 +146,38 @@ object ListenerService : Listener
     }
 
     @EventHandler
+    fun PlayerMoveEvent.onVisitSpawn()
+    {
+        if (
+            !EventFilters
+                .ignoreSameBlock<PlayerMoveEvent>()
+                .test(this)
+        )
+        {
+            return
+        }
+
+        if (
+            config.spawnZone.cuboid.contains(from) &&
+            !config.spawnZone.cuboid.contains(to)
+        )
+        {
+            player.profile.state = PlayerState.Warzone
+            return
+        }
+
+        // TODO: player tps in? player enderpeals in?
+        if (
+            !config.spawnZone.cuboid.contains(from) &&
+            config.spawnZone.cuboid.contains(to)
+        )
+        {
+            player.profile.state = PlayerState.Spawn
+            return
+        }
+    }
+
+    @EventHandler
     fun PlayerDeathEvent.on()
     {
         deathMessage =
@@ -190,6 +229,41 @@ object ListenerService : Listener
 
         profile.player().refresh(GameMode.ADVENTURE)
         profile.player().teleport(config.spawn)
+    }
+
+    @EventHandler
+    fun EntityDamageEvent.onFall()
+    {
+        if (
+            entity is Player &&
+            cause == EntityDamageEvent.DamageCause.FALL &&
+            fallDamageInvincibilityCache.getIfPresent(entity.uniqueId) != null
+        )
+        {
+            isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun PlayerStateChangeEvent.toWarZone()
+    {
+        if (to != PlayerState.Warzone)
+        {
+            return
+        }
+
+        profile.player().refresh(GameMode.SURVIVAL)
+        profile.previouslyChosenKit
+            ?.apply {
+                val kit = config.kits[this]
+                    ?: return@apply
+
+                kit.applyTo(profile.player())
+            }
+
+        fallDamageInvincibilityCache.put(
+            profile.identifier, profile.identifier
+        )
     }
 
     private val soup = ItemStack(Material.MUSHROOM_SOUP)

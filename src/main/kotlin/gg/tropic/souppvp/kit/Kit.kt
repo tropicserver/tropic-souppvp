@@ -2,6 +2,7 @@ package gg.tropic.souppvp.kit
 
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 
@@ -31,3 +32,9 @@ data class Kit(
     val abilitySlots: MutableMap<Int, String> = mutableMapOf(),
     val potionEffects: MutableList<PotionEffect> = mutableListOf()
 )
+{
+    fun applyTo(player: Player)
+    {
+
+    }
+}
