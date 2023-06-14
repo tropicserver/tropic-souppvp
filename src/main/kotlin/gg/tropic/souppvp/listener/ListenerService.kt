@@ -39,6 +39,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
@@ -450,6 +451,15 @@ object ListenerService : Listener
             isCancelled = true
             return
         }
+    }
+
+    @EventHandler
+    fun CraftItemEvent.on()
+    {
+        isCancelled = true
+        inventory.viewers[0].sendMessage(
+            "${CC.RED}What are you trying to do?"
+        )
     }
 
     @EventHandler
