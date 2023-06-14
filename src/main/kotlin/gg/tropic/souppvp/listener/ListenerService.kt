@@ -254,6 +254,7 @@ object ListenerService : Listener
     @EventHandler
     fun PlayerDropItemEvent.on()
     {
+        // TODO: possibly unwanted logic?
         if (player.profile.state == PlayerState.Spawn)
         {
             isCancelled = true
