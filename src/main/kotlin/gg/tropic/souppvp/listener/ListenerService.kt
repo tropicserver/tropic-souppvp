@@ -272,6 +272,12 @@ object ListenerService : Listener
                                 Numbers.format(amount)
                             } $coinIcon${CC.SEC}."
                         )
+
+                        Bukkit.broadcastMessage(
+                            "${CC.DARK_AQUA}$name${CC.SEC} claimed the bounty on ${CC.GREEN}${entity.name}${CC.SEC} worth ${CC.GOLD}${
+                                Numbers.format(amount)
+                            } $coinIcon${CC.SEC}."
+                        )
                     }
 
                 entity.profile.bounty = null

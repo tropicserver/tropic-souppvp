@@ -88,6 +88,9 @@ object BountyCommand : ScalaCommand()
             )
         }
 
+        profile.coins -= amount
+        profile.save()
+
         if (targetProfile.bounty == null)
         {
             val bounty = Bounty(
