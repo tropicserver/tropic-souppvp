@@ -4,8 +4,10 @@ import com.google.common.cache.CacheBuilder
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
+import gg.tropic.souppvp.kit.KitMenu
 import gg.tropic.souppvp.profile.*
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.local.CombatTag
@@ -15,6 +17,7 @@ import me.lucko.helper.Schedulers
 import me.lucko.helper.event.filter.EventFilters
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -43,6 +46,7 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 6/13/2023
  */
+@Service
 @Listeners
 object ListenerService : Listener
 {
@@ -255,11 +259,19 @@ object ListenerService : Listener
             return
         }
 
-        profile.player().refresh(GameMode.ADVENTURE)
+        val player = profile.player()
+        player.refresh(GameMode.ADVENTURE)
+
+        hotbarMappings.entries
+            .forEach {
+                player.inventory.setItem(it.value.second, it.key)
+            }
+
+        player.updateInventory()
 
         if (from == PlayerState.Loading)
         {
-            profile.player().teleport(config.spawn)
+            player.teleport(config.spawn)
         }
     }
 
@@ -321,9 +333,34 @@ object ListenerService : Listener
             }
         }
 
+    private val hotbarMappings = mutableMapOf(
+        ItemBuilder
+            .of(Material.FIREBALL)
+            .name("${CC.GREEN}Select a Kit")
+            .build()
+            to
+            ({ player: Player ->
+                KitMenu().openMenu(player)
+            } to 0)
+    )
+
     @EventHandler
     fun PlayerInteractEvent.on()
     {
+        if (player.profile.state == PlayerState.Spawn)
+        {
+            if (action == Action.RIGHT_CLICK_AIR)
+            {
+                hotbarMappings.entries
+                    .firstOrNull {
+                        it.key.isSimilar(item)
+                    }
+                    ?.value?.first?.invoke(player)
+            }
+
+            return
+        }
+
         if (action == Action.RIGHT_CLICK_AIR)
         {
             if (player.itemInHand.type == Material.MUSHROOM_SOUP && player.health < 19.5)
