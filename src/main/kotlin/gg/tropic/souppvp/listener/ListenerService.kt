@@ -22,6 +22,7 @@ import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Sign
 import org.bukkit.entity.Player
@@ -186,9 +187,32 @@ object ListenerService : Listener
             return
         }
 
+        handleSpawnZone(
+            from = from.block,
+            to = to.block,
+            player = player
+        )
+    }
+
+    @EventHandler
+    fun PlayerTeleportEvent.onVisitSpawn()
+    {
+        handleSpawnZone(
+            from = from.block,
+            to = to.block,
+            player = player
+        )
+    }
+
+    private fun handleSpawnZone(
+        from: Block,
+        to: Block,
+        player: Player
+    )
+    {
         if (
-            config.spawnZone.cuboid.contains(from.block) &&
-            !config.spawnZone.cuboid.contains(to.block)
+            config.spawnZone.cuboid.contains(from) &&
+            !config.spawnZone.cuboid.contains(to)
         )
         {
             player.profile.state = PlayerState.Warzone
@@ -198,8 +222,8 @@ object ListenerService : Listener
 
         // TODO: player tps in? player enderpeals in?
         if (
-            !config.spawnZone.cuboid.contains(from.block) &&
-            config.spawnZone.cuboid.contains(to.block)
+            !config.spawnZone.cuboid.contains(from) &&
+            config.spawnZone.cuboid.contains(to)
         )
         {
             player.profile.state = PlayerState.Spawn

@@ -12,17 +12,18 @@ import org.bukkit.potion.PotionEffect
  */
 data class Kit(
     val id: String,
+    var enabled: Boolean = true,
     var displayName: String = id
         .lowercase()
         .capitalize(),
-    val item: ItemStack = ItemBuilder
+    var item: ItemStack = ItemBuilder
         .of(Material.PAPER)
         .build(),
     val description: MutableList<String> = mutableListOf(
         "Default kit description."
     ),
     val position: Int = 0,
-    val cost: Double = 0.0,
+    var cost: Double = 0.0,
     val armor: MutableList<ItemStack> = mutableListOf(),
     /***
      * Abilities are parsed and removed on kit content update. These

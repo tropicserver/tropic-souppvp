@@ -1,13 +1,17 @@
 package gg.tropic.souppvp.command.admin
 
 import gg.scala.commons.acf.CommandHelp
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommand
+import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.lemon.player.LemonPlayer
 import gg.tropic.souppvp.config.LocalZone
 import gg.tropic.souppvp.config.config
+import gg.tropic.souppvp.kit.Kit
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.menu.menus.TextEditorMenu
@@ -22,8 +26,33 @@ import org.bukkit.entity.Player
 @AutoRegister
 @CommandAlias("soupadmin")
 @CommandPermission("soup.command.admin")
-object AdminCommand : ScalaCommand()
+object AdminCommands : ScalaCommand()
 {
+    @CommandManagerCustomizer
+    fun customizer(
+        manager: ScalaCommandManager
+    )
+    {
+        manager.commandCompletions
+            .registerAsyncCompletion(
+                "kits"
+            ) {
+                config.kits.keys
+            }
+
+        manager.commandContexts
+            .registerContext(
+                Kit::class.java
+            ) {
+                val arg = it.popFirstArg()
+
+                config.kits[arg.lowercase()]
+                    ?: throw ConditionFailedException(
+                        "No kit with the ID $arg exists."
+                    )
+            }
+    }
+
     @Default
     @HelpCommand
     fun onHelp(help: CommandHelp)
@@ -68,6 +97,73 @@ object AdminCommand : ScalaCommand()
                         .start(player.bukkit())
                 }
                 .start(player.bukkit())
+        }
+
+    @Subcommand("kit create")
+    fun onKitCreate(player: ScalaPlayer, @Single id: String) =
+        with(config) {
+            if (config.kits[id.lowercase()] != null)
+            {
+                throw ConditionFailedException(
+                    "A kit with that id already exists."
+                )
+            }
+
+            config.kits[id.lowercase()] = Kit(id.lowercase())
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Added new kit: ${CC.WHITE}$id${CC.GREEN}."
+            )
+        }
+
+    @Subcommand("kit display")
+    fun onKitDisplay(player: ScalaPlayer, kit: Kit, displayName: String) =
+        with(config) {
+            kit.displayName = displayName
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Display is now: ${CC.WHITE}$displayName${CC.GREEN}."
+            )
+        }
+
+    @Subcommand("kit cost")
+    fun onKitCost(player: ScalaPlayer, kit: Kit, cost: Double) =
+        with(config) {
+            kit.cost = cost
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Cost is now: ${CC.WHITE}$cost${CC.GREEN}."
+            )
+        }
+
+    @Subcommand("kit item")
+    fun onKitItem(player: ScalaPlayer, kit: Kit) =
+        with(config) {
+            if (player.bukkit().itemInHand == null)
+            {
+                throw ConditionFailedException("Have an item in your hand!")
+            }
+
+            kit.item = player.bukkit().itemInHand
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Item is now from your inventory."
+            )
+        }
+
+    @Subcommand("kit toggle")
+    fun onKitToggle(player: ScalaPlayer, kit: Kit) =
+        with(config) {
+            kit.enabled = !kit.enabled
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Toggled is now: ${kit.enabled}."
+            )
         }
 
     @Subcommand("launchpad velocity")

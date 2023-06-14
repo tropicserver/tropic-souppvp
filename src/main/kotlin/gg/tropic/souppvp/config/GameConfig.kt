@@ -11,7 +11,7 @@ import org.bukkit.Location
  * @since 6/12/2023
  */
 class GameConfig(
-    val kits: Map<String, Kit> = mutableMapOf(
+    val kits: MutableMap<String, Kit> = mutableMapOf(
         "default" to Kit(id = "default")
     ),
     var launchpad: Launchpads = Launchpads(),

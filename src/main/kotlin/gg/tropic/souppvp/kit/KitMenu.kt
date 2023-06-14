@@ -33,70 +33,74 @@ class KitMenu : PaginatedMenu()
     override fun getAllPagesButtons(player: Player) =
         mutableMapOf<Int, Button>().apply {
             val profile = player.profile
-            config.kits.values.forEach {
-                this[size] = ItemBuilder
-                    .copyOf(it.item)
-                    .name("${CC.GREEN}${it.displayName}")
-                    .setLore(
-                        it.description
-                            .map { line -> "${CC.WHITE}$line" }
-                    )
-                    .apply {
-                        if (it.cost > 0.0 && !profile.owns(it))
-                        {
-                            addToLore(
-                                "",
-                                "${CC.GRAY}Price: ${CC.GOLD}${it.cost} $coinIcon",
-                                "",
-                                if (profile.coins < it.cost)
-                                    "${CC.RED}You're too broke to purchase this!"
-                                else
-                                    "${CC.GREEN}Click to purchase!"
-                            )
-                        } else
-                        {
-                            addToLore(
-                                "",
-                                "${CC.GREEN}Click to equip!"
-                            )
-                        }
-                    }
-                    .toButton { _, _ ->
-                        if (profile.owns(it) || it.cost == 0.0)
-                        {
-                            profile.previouslyChosenKit = it.id
-                            player.closeInventory()
-                        } else
-                        {
-                            if (profile.coins < it.cost)
+
+            config.kits
+                .filter { it.value.enabled }
+                .values
+                .forEach {
+                    this[size] = ItemBuilder
+                        .copyOf(it.item)
+                        .name("${CC.GREEN}${it.displayName}")
+                        .setLore(
+                            it.description
+                                .map { line -> "${CC.WHITE}$line" }
+                        )
+                        .apply {
+                            if (it.cost > 0.0 && !profile.owns(it))
                             {
-                                player.sendMessage("${CC.RED}You're too broke to purchase this!")
-                                return@toButton
+                                addToLore(
+                                    "",
+                                    "${CC.GRAY}Price: ${CC.GOLD}${it.cost} $coinIcon",
+                                    "",
+                                    if (profile.coins < it.cost)
+                                        "${CC.RED}You're too broke to purchase this!"
+                                    else
+                                        "${CC.GREEN}Click to purchase!"
+                                )
+                            } else
+                            {
+                                addToLore(
+                                    "",
+                                    "${CC.GREEN}Click to equip!"
+                                )
                             }
-
-                            ConfirmMenu(
-                                title = "Purchase kit: ${it.displayName}",
-                                extraInfo = emptyList(),
-                                confirm = true
-                            ) { confirmed ->
-                                if (confirmed)
+                        }
+                        .toButton { _, _ ->
+                            if (profile.owns(it) || it.cost == 0.0)
+                            {
+                                profile.previouslyChosenKit = it.id
+                                player.closeInventory()
+                            } else
+                            {
+                                if (profile.coins < it.cost)
                                 {
-                                    profile.coins -= it.cost
-                                    profile.ownedKits += it.id
-                                    profile.save()
+                                    player.sendMessage("${CC.RED}You're too broke to purchase this!")
+                                    return@toButton
+                                }
 
-                                    player.playSound(player.location, Sound.NOTE_BASS, 1.0f, 1.5f)
-                                    player.sendMessage("${CC.GREEN}You purchased the kit: ${CC.WHITE}${it.displayName}")
+                                ConfirmMenu(
+                                    title = "Purchase kit: ${it.displayName}",
+                                    extraInfo = emptyList(),
+                                    confirm = true
+                                ) { confirmed ->
+                                    if (confirmed)
+                                    {
+                                        profile.coins -= it.cost
+                                        profile.ownedKits += it.id
+                                        profile.save()
 
-                                    openMenu(player)
-                                } else
-                                {
-                                    openMenu(player)
+                                        player.playSound(player.location, Sound.NOTE_BASS, 1.0f, 1.5f)
+                                        player.sendMessage("${CC.GREEN}You purchased the kit: ${CC.WHITE}${it.displayName}")
+
+                                        openMenu(player)
+                                    } else
+                                    {
+                                        openMenu(player)
+                                    }
                                 }
                             }
                         }
-                    }
-            }
+                }
         }
 
     override fun size(buttons: Map<Int, Button>) = 36
