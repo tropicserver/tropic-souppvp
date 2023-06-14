@@ -85,7 +85,7 @@ object IglooCreatorAbility : Ability()
             "${CC.GREEN}Right-Click: ${CC.GRAY}Creates an ice house around you!"
         )
 
-    override val cooldown = Duration.ofSeconds(30L)!!
+    override val cooldown = Duration.ofSeconds(25L)!!
 
     override fun use(player: Player, item: ItemStack)
     {
@@ -129,6 +129,6 @@ object IglooCreatorAbility : Ability()
                 trackedBlocks.forEach {
                     it.type = Material.AIR
                 }
-            }, 15L, TimeUnit.SECONDS)
+            }, 10L, TimeUnit.SECONDS)
     }
 }
