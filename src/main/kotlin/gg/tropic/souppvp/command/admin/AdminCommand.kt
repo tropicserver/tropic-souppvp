@@ -43,6 +43,32 @@ object AdminCommand : ScalaCommand()
             }
     }
 
+    @Subcommand("launchpad velocity")
+    fun onLaunchpadVelocity(player: ScalaPlayer, velocity: Double) =
+        with(config) {
+            with(launchpad) {
+                this.velocity = velocity
+            }
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Launchpad velocity: ${CC.WHITE}$velocity${CC.GREEN}."
+            )
+        }
+
+    @Subcommand("launchpad y-multiplier")
+    fun onLaunchpadYMultiplier(player: ScalaPlayer, yMultiplier: Double) =
+        with(config) {
+            with(launchpad) {
+                this.yMultiplier = yMultiplier
+            }
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Launchpad Y multiplier: ${CC.WHITE}$yMultiplier${CC.GREEN}."
+            )
+        }
+
     @Subcommand("set-spawn")
     @Description("Set the server's spawn location.")
     fun onSetSpawn(player: ScalaPlayer) =

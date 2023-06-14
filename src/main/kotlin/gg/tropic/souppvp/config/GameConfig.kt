@@ -31,6 +31,6 @@ class GameConfig(
 }
 
 data class Launchpads(
-    val velocity: Double = 3.5,
-    val yMultiplier: Double = 1.05
+    var velocity: Double = 3.5,
+    var yMultiplier: Double = 1.05
 )

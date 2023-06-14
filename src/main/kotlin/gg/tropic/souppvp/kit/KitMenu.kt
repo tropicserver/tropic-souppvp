@@ -8,6 +8,7 @@ import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 
 /**
@@ -84,7 +85,9 @@ class KitMenu : PaginatedMenu()
                                     profile.ownedKits += it.id
                                     profile.save()
 
+                                    player.playSound(player.location, Sound.NOTE_BASS, 1.0f, 1.5f)
                                     player.sendMessage("${CC.GREEN}You purchased the kit: ${CC.WHITE}${it.displayName}")
+
                                     openMenu(player)
                                 } else
                                 {
