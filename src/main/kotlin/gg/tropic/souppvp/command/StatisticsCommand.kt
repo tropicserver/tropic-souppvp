@@ -10,6 +10,8 @@ import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import gg.tropic.souppvp.leaderboard.LeaderboardService
+import gg.tropic.souppvp.leaderboard.LeaderboardType
 import gg.tropic.souppvp.profile.SoupProfile
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
@@ -23,6 +25,17 @@ import java.util.concurrent.CompletableFuture
 @AutoRegister
 object StatisticsCommand : ScalaCommand()
 {
+    @CommandAlias("killtop")
+    fun onBalanceTop(player: ScalaPlayer)
+    {
+        player.sendMessage(
+            "${CC.B_GREEN}Top 10 kills:",
+            *LeaderboardService
+                .mapToFormattedLeaderboards(LeaderboardType.Kills)
+                .toTypedArray()
+        )
+    }
+
     @CommandCompletion("@players")
     @CommandAlias("stats|statistics")
     fun onBalance(
