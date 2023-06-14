@@ -357,11 +357,8 @@ object ListenerService : Listener
     @EventHandler
     fun PlayerInteractEvent.on()
     {
-        if (
-            action == Action.RIGHT_CLICK_AIR ||
-            action == Action.RIGHT_CLICK_BLOCK &&
-            clickedBlock == null
-        )
+        // TODO: fix block interaction but no duplication
+        if (action == Action.RIGHT_CLICK_AIR)
         {
             if (player.profile.state == PlayerState.Spawn)
             {
