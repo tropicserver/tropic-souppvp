@@ -51,7 +51,7 @@ object AdminCommands : ScalaCommand()
             WEAKNESS
             POISON
             WITHER
-            HEALTH_BOOS
+            HEALTH_BOOST
             ABSORPTION 
             SATURATION 
         """.trimIndent()
