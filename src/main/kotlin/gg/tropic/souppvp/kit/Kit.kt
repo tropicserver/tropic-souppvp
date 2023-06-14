@@ -53,13 +53,7 @@ class Kit(
 
                 player.inventory.setItem(
                     t,
-                    ItemBuilder
-                        .copyOf(mapping.item)
-                        .addToLore(
-                            "",
-                            AbilityService.abilityMetaKey
-                        )
-                        .build()
+                    mapping.deployed
                 )
             }
 
