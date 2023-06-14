@@ -45,7 +45,10 @@ data class SoupProfile(
 
     val kdr: Float
         get() = if (deaths == 0)
-            0.0f else kills / deaths.toFloat()
+            kills.toFloat()
+        else if (kills == 0)
+            -deaths.toFloat()
+        else kills / deaths.toFloat()
 
     val kdrFormat: String
         get() = "%.2f".format(kdr)
