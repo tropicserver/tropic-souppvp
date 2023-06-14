@@ -42,7 +42,7 @@ class KitMenu : PaginatedMenu()
                             .map { line -> "${CC.WHITE}$line" }
                     )
                     .apply {
-                        if (!profile.owns(it))
+                        if (it.cost > 0.0 && !profile.owns(it))
                         {
                             addToLore(
                                 "",
@@ -62,7 +62,7 @@ class KitMenu : PaginatedMenu()
                         }
                     }
                     .toButton { _, _ ->
-                        if (profile.owns(it))
+                        if (profile.owns(it) || it.cost == 0.0)
                         {
                             profile.previouslyChosenKit = it.id
                             player.closeInventory()

@@ -158,21 +158,23 @@ object ListenerService : Listener
         }
 
         if (
-            config.spawnZone.cuboid.contains(from) &&
-            !config.spawnZone.cuboid.contains(to)
+            config.spawnZone.cuboid.contains(from.block) &&
+            !config.spawnZone.cuboid.contains(to.block)
         )
         {
             player.profile.state = PlayerState.Warzone
+            player.sendMessage("going to warzone")
             return
         }
 
         // TODO: player tps in? player enderpeals in?
         if (
-            !config.spawnZone.cuboid.contains(from) &&
-            config.spawnZone.cuboid.contains(to)
+            !config.spawnZone.cuboid.contains(from.block) &&
+            config.spawnZone.cuboid.contains(to.block)
         )
         {
             player.profile.state = PlayerState.Spawn
+            player.sendMessage("going to spawn")
             return
         }
     }

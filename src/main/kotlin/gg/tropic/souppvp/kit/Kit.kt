@@ -22,7 +22,7 @@ data class Kit(
         "Default kit description."
     ),
     val position: Int = 0,
-    val cost: Double = 1000.0,
+    val cost: Double = 0.0,
     val armor: MutableList<ItemStack> = mutableListOf(),
     /***
      * Abilities are parsed and removed on kit content update. These

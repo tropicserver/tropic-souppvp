@@ -19,11 +19,11 @@ class GameConfig(
     var spawnZone: LocalZone = LocalZone(
         zoneMin = Location(
             Bukkit.getWorlds()[0],
-            -27.5, 66.0, -21.5
+            -27.5, 64.0, -21.5
         ),
         zoneMax = Location(
             Bukkit.getWorlds()[0],
-            -2.5, 66.0, -45.5
+            -2.5, 90.0, -45.5
         )
     ),
     var spawn: Location = Location(
