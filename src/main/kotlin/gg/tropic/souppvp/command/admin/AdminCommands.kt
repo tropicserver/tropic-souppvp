@@ -77,7 +77,6 @@ object AdminCommands : ScalaCommand()
                 potionEffectRegistry.keys
             }
 
-
         manager.commandContexts
             .registerContext(
                 PotionEffectType::class.java
@@ -166,6 +165,14 @@ object AdminCommands : ScalaCommand()
                 "${CC.GREEN}Added new kit: ${CC.WHITE}$id${CC.GREEN}."
             )
         }
+
+    @Subcommand("ability give")
+    fun onAbilityGive(player: ScalaPlayer, ability: String)
+    {
+        player.bukkit().inventory.addItem(
+            Kit.buildAbilityItem(ability)
+        )
+    }
 
     @Subcommand("kit display")
     @CommandCompletion("@kits")

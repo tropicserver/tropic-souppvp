@@ -50,7 +50,6 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 6/13/2023
  */
-@Service
 @Listeners
 object ListenerService : Listener
 {
@@ -84,48 +83,41 @@ object ListenerService : Listener
                 .bindWith(plugin)
         }
 
+        var timer = 180
         val triggerSeconds = listOf(30, 5, 4, 3, 2, 1)
 
-        fun startGroundClearRunnable()
-        {
-            var timer = 180
+        Schedulers
+            .async()
+            .runRepeating({ _ ->
+                if (timer <= 0)
+                {
+                    Tasks.sync {
+                        Bukkit.getWorlds()
+                            .forEach {
+                                it.entities
+                                    .filterIsInstance<Item>()
+                                    .forEach { entity ->
+                                        entity.remove()
+                                    }
+                            }
 
-            Schedulers
-                .async()
-                .runRepeating({ task ->
-                    if (timer <= 0)
-                    {
-                        Tasks.sync {
-                            Bukkit.getWorlds()
-                                .forEach {
-                                    it.entities
-                                        .filterIsInstance<Item>()
-                                        .forEach { entity ->
-                                            entity.remove()
-                                        }
-                                }
-
-                            startGroundClearRunnable()
-                            Bukkit.broadcastMessage(
-                                "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items have been cleared!"
-                            )
-                        }
-                        timer = 180
-                        return@runRepeating
-                    }
-
-                    if (timer in triggerSeconds)
-                    {
                         Bukkit.broadcastMessage(
-                            "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items will be doing the clearing process in ${CC.WHITE}$timer${CC.GRAY} seconds. Please make sure to look at the seatbelt sign and make sure to sit at your seats. Continue to not smoke throughout the final period of the flight. Thank you for fliying Ice resurfacer airliins. It is 45 degrees at tropicland."
+                            "${CC.RED}[Server] ${CC.GRAY}Ground items have been cleared!"
                         )
                     }
+                    timer = 180
+                    return@runRepeating
+                }
 
-                    timer -= 1
-                }, 0L, 20L)
-        }
+                if (timer in triggerSeconds)
+                {
+                    Bukkit.broadcastMessage(
+                        "${CC.RED}[Server] ${CC.GRAY}Ground items will be cleared in ${CC.WHITE}$timer${CC.GRAY} seconds."
+                    )
+                }
 
-        startGroundClearRunnable()
+                timer -= 1
+            }, 0L, 20L)
     }
 
     @EventHandler
