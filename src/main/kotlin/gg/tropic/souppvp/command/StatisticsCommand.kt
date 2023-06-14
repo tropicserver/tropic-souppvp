@@ -43,7 +43,7 @@ object StatisticsCommand : ScalaCommand()
                     .load(it.uniqueId, DataStoreStorageType.MONGO)
                     .join()
                     ?: throw ConditionFailedException(
-                        "${it.name} has not yet joined our Soup server."
+                        "${CC.YELLOW}${it.name}${CC.RED} has not yet joined our Soup server."
                     )
 
                 player.sendMessage("${CC.GREEN}Stats for ${it.name}:")

@@ -3,11 +3,14 @@ package gg.tropic.souppvp.leaderboard
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.profile.SoupProfile
 import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.math.Numbers
 
 /**
  * @author GrowlyX
@@ -24,6 +27,18 @@ object LeaderboardService
 
     fun resultsFor(type: LeaderboardType) =
         mappings[type] ?: listOf()
+
+    private val format = CC.GREEN + "#%s. " + CC.WHITE + "%s " + CC.GRAY + "❘" + CC.GREEN + " %s"
+
+    fun mapToFormattedLeaderboards(type: LeaderboardType) =
+        resultsFor(type)
+            .mapIndexed { index, result ->
+                format.format(
+                    index + 1,
+                    result._id.username(),
+                    Numbers.format(result.value)
+                )
+            }
 
     @Configure
     fun configure()
