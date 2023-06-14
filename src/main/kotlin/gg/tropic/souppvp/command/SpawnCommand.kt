@@ -106,7 +106,7 @@ object SpawnCommand : ScalaCommand()
         Events
             .subscribe(PlayerMoveEvent::class.java)
             .filter {
-                !EventFilters
+                EventFilters
                     .ignoreSameBlockAndY<PlayerMoveEvent>()
                     .test(it)
             }
