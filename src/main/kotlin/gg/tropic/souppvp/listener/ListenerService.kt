@@ -18,6 +18,7 @@ import me.lucko.helper.event.filter.EventFilters
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.math.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -248,7 +249,10 @@ object ListenerService : Listener
             save()
 
             state = PlayerState.Spawn
-            entity.teleport(config.spawn)
+
+            Tasks.delayed(1L) {
+                entity.teleport(config.spawn)
+            }
         }
 
         entity.extract<CombatTag>("combat")

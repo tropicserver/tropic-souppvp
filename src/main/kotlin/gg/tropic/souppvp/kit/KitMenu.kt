@@ -37,6 +37,7 @@ class KitMenu : PaginatedMenu()
             config.kits
                 .filter { it.value.enabled }
                 .values
+                .sortedBy { it.position }
                 .forEach {
                     this[size] = ItemBuilder
                         .copyOf(it.item)

@@ -10,7 +10,7 @@ import org.bukkit.potion.PotionEffect
  * @author GrowlyX
  * @since 6/12/2023
  */
-data class Kit(
+class Kit(
     val id: String,
     var enabled: Boolean = true,
     var displayName: String = id
@@ -22,20 +22,51 @@ data class Kit(
     val description: MutableList<String> = mutableListOf(
         "Default kit description."
     ),
-    val position: Int = 0,
+    var position: Int = 0,
     var cost: Double = 0.0,
-    val armor: MutableList<ItemStack> = mutableListOf(),
+    var armor: Array<ItemStack> = arrayOf(),
     /***
      * Abilities are parsed and removed on kit content update. These
      * ability slots are set when the kit is applied to the player.
      */
-    val contents: MutableList<ItemStack> = mutableListOf(),
+    var contents: Array<ItemStack> = arrayOf(),
     val abilitySlots: MutableMap<Int, String> = mutableMapOf(),
     val potionEffects: MutableList<PotionEffect> = mutableListOf()
 )
 {
+    companion object
+    {
+        fun buildAbilityItem(name: String) = ItemBuilder
+            .of(Material.EGG)
+            .name("[ability]")
+            .addToLore(name)
+            .build()
+
+        fun isAbilityItem(itemStack: ItemStack) =
+            itemStack.itemMeta.displayName == "[ability]"
+
+        fun exportAbilityFromItem(item: ItemStack) =
+            item.itemMeta.lore.first()
+    }
+
     fun applyTo(player: Player)
     {
+        player.inventory.contents = contents
+        player.inventory.armorContents = armor
 
+        potionEffects.forEach {
+            player.addPotionEffect(it, true)
+        }
+
+        // TODO: actually apply it
+        /*abilitySlots
+            .forEach { (t, u) ->
+                player.inventory.setItem(
+                    t,
+                    buildAbilityItem(u)
+                )
+            }*/
+
+        player.updateInventory()
     }
 }

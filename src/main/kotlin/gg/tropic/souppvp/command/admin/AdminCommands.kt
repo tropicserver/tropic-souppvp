@@ -18,6 +18,8 @@ import net.evilblock.cubed.menu.menus.TextEditorMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 
 /**
  * @author GrowlyX
@@ -118,6 +120,7 @@ object AdminCommands : ScalaCommand()
         }
 
     @Subcommand("kit display")
+    @CommandCompletion("@kits")
     fun onKitDisplay(player: ScalaPlayer, kit: Kit, displayName: String) =
         with(config) {
             kit.displayName = displayName
@@ -129,6 +132,7 @@ object AdminCommands : ScalaCommand()
         }
 
     @Subcommand("kit cost")
+    @CommandCompletion("@kits")
     fun onKitCost(player: ScalaPlayer, kit: Kit, cost: Double) =
         with(config) {
             kit.cost = cost
@@ -139,7 +143,67 @@ object AdminCommands : ScalaCommand()
             )
         }
 
+    @Subcommand("kit positionweight")
+    @CommandCompletion("@kits")
+    fun onKitPositionWeight(player: ScalaPlayer, kit: Kit, position: Int) =
+        with(config) {
+            kit.position = position
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Position is now: ${CC.WHITE}$position{CC.GREEN}."
+            )
+        }
+
+    @Subcommand("kit getinventory")
+    @CommandCompletion("@kits")
+    fun onKitGetInventory(player: ScalaPlayer, kit: Kit) =
+        with(config) {
+            val bukkit = player.bukkit()
+            bukkit.inventory.contents = kit.contents
+            bukkit.inventory.armorContents = kit.armor
+
+            kit.abilitySlots
+                .forEach { (t, u) ->
+                    bukkit.inventory.setItem(
+                        t,
+                        Kit.buildAbilityItem(u)
+                    )
+                }
+
+            bukkit.updateInventory()
+        }
+
+    @Subcommand("kit setinventory")
+    @CommandCompletion("@kits")
+    fun onKitSetInventory(player: ScalaPlayer, kit: Kit) =
+        with(config) {
+            val bukkit = player.bukkit()
+            kit.contents = bukkit.inventory.contents
+                .filterNot {
+                    Kit.isAbilityItem(it)
+                }
+                .toTypedArray()
+
+            kit.armor = bukkit.inventory.armorContents
+
+            kit.abilitySlots.clear()
+
+            bukkit.inventory.contents
+                .forEachIndexed { index, itemStack ->
+                    if (Kit.isAbilityItem(itemStack))
+                    {
+                        kit.abilitySlots[index] = Kit
+                            .exportAbilityFromItem(itemStack)
+                    }
+                }
+
+            player.sendMessage("${CC.GREEN}Set inventory")
+            pushUpdates()
+        }
+
     @Subcommand("kit item")
+    @CommandCompletion("@kits")
     fun onKitItem(player: ScalaPlayer, kit: Kit) =
         with(config) {
             if (player.bukkit().itemInHand == null)
@@ -156,6 +220,7 @@ object AdminCommands : ScalaCommand()
         }
 
     @Subcommand("kit toggle")
+    @CommandCompletion("@kits")
     fun onKitToggle(player: ScalaPlayer, kit: Kit) =
         with(config) {
             kit.enabled = !kit.enabled
@@ -163,6 +228,40 @@ object AdminCommands : ScalaCommand()
 
             player.sendMessage(
                 "${CC.GREEN}Toggled is now: ${kit.enabled}."
+            )
+        }
+
+    @CommandCompletion("@kits")
+    @Subcommand("kit potioneffect remove")
+    fun onKitToggle(player: ScalaPlayer, kit: Kit, type: PotionEffectType) =
+        with(config) {
+            kit.potionEffects
+                .removeIf {
+                    it.type == type
+                }
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Removed type: ${type.name}."
+            )
+        }
+
+    @CommandCompletion("@kits")
+    @Subcommand("kit potioneffect add")
+    fun onKitToggle(player: ScalaPlayer, kit: Kit, type: PotionEffectType, duration: Int, amplifier: Int) =
+        with(config) {
+            if (kit.potionEffects.any { it.type == type })
+            {
+                throw ConditionFailedException("potion effect already exists!")
+            }
+
+            kit.potionEffects.add(
+                PotionEffect(type, duration, amplifier)
+            )
+            pushUpdates()
+
+            player.sendMessage(
+                "${CC.GREEN}Added type: ${type.name}."
             )
         }
 
