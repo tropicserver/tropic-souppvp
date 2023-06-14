@@ -83,6 +83,8 @@ class KitMenu : PaginatedMenu()
             }
         }
 
+    override fun size(buttons: Map<Int, Button>) = 36
+
     override fun getAllPagesButtonSlots() = slots
     override fun getPrePaginatedTitle(player: Player) = "Select a kit"
 }
