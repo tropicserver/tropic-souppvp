@@ -1,5 +1,6 @@
 package gg.tropic.souppvp.kit
 
+import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -36,14 +37,16 @@ class Kit(
 {
     companion object
     {
+        private val abilityMetaKey = "${CC.WHITE}[ability]"
+
         fun buildAbilityItem(name: String) = ItemBuilder
-            .of(Material.EGG)
-            .name("[ability]")
+            .of(Material.MONSTER_EGG)
+            .name(abilityMetaKey)
             .addToLore(name)
             .build()
 
         fun isAbilityItem(itemStack: ItemStack) =
-            itemStack.itemMeta.displayName == "[ability]"
+            itemStack.itemMeta.displayName == abilityMetaKey
 
         fun exportAbilityFromItem(item: ItemStack) =
             item.itemMeta.lore.first()

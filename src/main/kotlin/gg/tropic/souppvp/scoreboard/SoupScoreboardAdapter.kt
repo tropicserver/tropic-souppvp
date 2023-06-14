@@ -1,6 +1,7 @@
 package gg.tropic.souppvp.scoreboard
 
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.LemonConstants
 import gg.tropic.souppvp.listener.ListenerService
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.extract
@@ -28,9 +29,10 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
     {
         val profile = player.profile
         lines += ""
-        lines += "${CC.WHITE}Kills: ${CC.GOLD}${profile.kills}"
-        lines += "${CC.WHITE}Deaths: ${CC.GOLD}${profile.deaths}"
-        lines += "${CC.WHITE}KDR: ${CC.GOLD}${profile.kdrFormat}"
+        lines += "${CC.WHITE}Kills: ${CC.PRI}${profile.kills}"
+        lines += "${CC.WHITE}Deaths: ${CC.PRI}${profile.deaths}"
+        lines += "${CC.WHITE}KDR: ${CC.PRI}${profile.kdrFormat}"
+        lines += "${CC.WHITE}Kill streak: ${CC.PRI}${profile.killStreak} ${CC.GRAY}(${profile.maxKillStreak})"
         lines += ""
         lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
 
@@ -50,7 +52,7 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
             }
 
         lines += ""
-        lines += "${CC.GRAY}tropic.gg" + "          "  + CC.GRAY + "      "  + CC.GRAY
+        lines += "${CC.GRAY}${LemonConstants.WEB_LINK}" + "          "  + CC.GRAY + "      "  + CC.GRAY
     }
 
     override fun getTitle(player: Player) = "${CC.B_PRI}SoupPvP"

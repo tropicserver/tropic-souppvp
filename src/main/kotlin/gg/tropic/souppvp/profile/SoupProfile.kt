@@ -16,9 +16,12 @@ import java.util.*
 data class SoupProfile(
     override val identifier: UUID,
     var kills: Int = 0,
+    var killStreak: Int = 0,
+    var maxKillStreak: Int = 0,
     var deaths: Int = 0,
     var soupsConsumed: Int = 0,
     var coins: Double = 0.0,
+    var experience: Int = 0,
     /**
      * Set of perk class names.
      */

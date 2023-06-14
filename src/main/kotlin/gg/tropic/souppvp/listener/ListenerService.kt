@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 6/13/2023
  */
-@Listeners
+@Service
 object ListenerService : Listener
 {
     @Inject
@@ -64,6 +64,9 @@ object ListenerService : Listener
     @Configure
     fun configure()
     {
+        plugin.server.pluginManager
+            .registerEvents(this, plugin)
+
         listOf(
             BlockBreakEvent::class.java,
             BlockPlaceEvent::class.java,
@@ -284,12 +287,19 @@ object ListenerService : Listener
         }
 
         deathMessage =
-            "${CC.GREEN}${entity.name}${CC.SEC} was fucked${
+            "${CC.GREEN}${entity.name}${CC.GRAY} was killed${
                 if (entity.killer != null) " by ${CC.GREEN}${entity.killer?.name}" else ""
-            }${CC.SEC}!"
+            }${CC.GRAY}!"
 
         entity.profile.apply {
             deaths += 1
+
+            if (killStreak > 0)
+            {
+                killStreak = 0
+                entity.sendMessage("${CC.RED}You lost your streak of $killStreak kills!")
+            }
+
             save()
 
             state = PlayerState.Spawn
@@ -306,6 +316,21 @@ object ListenerService : Listener
 
         entity.killer?.apply {
             profile.kills += 1
+            profile.killStreak += 1
+
+            profile.coins += 13
+            profile.experience += 3
+
+            sendMessage(arrayOf(
+                "${CC.GOLD}+13 coins (killing a player)",
+                "${CC.GREEN}+3 exp (killing a player)"
+            ))
+
+            if (profile.maxKillStreak < profile.killStreak)
+            {
+                profile.maxKillStreak = profile.killStreak
+            }
+
             profile.save()
 
             if (entity.profile.bounty != null)
@@ -314,7 +339,6 @@ object ListenerService : Listener
                     .apply {
                         profile.coins += this.amount
 
-                        // TODO: server broadcast for this?
                         sendMessage(
                             "${CC.SEC}You claimed a bounty on ${CC.GREEN}${entity.name}${CC.SEC} worth ${CC.GOLD}${
                                 Numbers.format(amount)
