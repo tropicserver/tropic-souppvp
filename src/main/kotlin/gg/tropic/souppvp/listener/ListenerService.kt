@@ -125,14 +125,14 @@ object ListenerService : Listener
             return
         }
 
-        val block = player.location.block
+        val block = to.block
             .getRelative(BlockFace.DOWN)
 
         if (block.type == Material.SPONGE)
         {
             val vector = player.location.direction
-                .multiply(3.5)
-                .setY(1.05)
+                .multiply(config.launchpad.velocity)
+                .setY(config.launchpad.yMultiplier)
 
             player.velocity = vector
         }

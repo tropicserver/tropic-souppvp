@@ -13,6 +13,7 @@ class GameConfig(
     val kits: Map<String, Kit> = mutableMapOf(
         "default" to Kit(id = "default")
     ),
+    var launchpad: Launchpads = Launchpads(),
     var spawn: Location = Location(
         Bukkit.getWorlds()[0],
         0.0, 70.0, 0.0
@@ -28,3 +29,8 @@ class GameConfig(
 {
     fun pushUpdates() = GameConfigService.sync(this)
 }
+
+data class Launchpads(
+    val velocity: Double = 3.5,
+    val yMultiplier: Double = 1.05
+)
