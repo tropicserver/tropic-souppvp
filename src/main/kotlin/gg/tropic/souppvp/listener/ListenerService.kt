@@ -84,36 +84,45 @@ object ListenerService : Listener
                 .bindWith(plugin)
         }
 
+        val triggerSeconds = listOf(30, 5, 4, 3, 2, 1)
+
         fun startGroundClearRunnable()
         {
-            object : DiminutionRunnable(60 * 3)
-            {
-                override fun getSeconds() = listOf(30, 5, 4, 3, 2, 1)
+            var timer = 180
 
-                override fun onEnd()
-                {
-                    Bukkit.getWorlds()
-                        .forEach {
-                            it.entities
-                                .filterIsInstance<Item>()
-                                .forEach { entity ->
-                                    entity.remove()
+            Schedulers
+                .async()
+                .runRepeating({ task ->
+                    if (timer <= 0)
+                    {
+                        Tasks.sync {
+                            Bukkit.getWorlds()
+                                .forEach {
+                                    it.entities
+                                        .filterIsInstance<Item>()
+                                        .forEach { entity ->
+                                            entity.remove()
+                                        }
                                 }
+
+                            startGroundClearRunnable()
+                            Bukkit.broadcastMessage(
+                                "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items have been cleared!"
+                            )
                         }
+                        timer = 180
+                        return@runRepeating
+                    }
 
-                    startGroundClearRunnable()
-                    Bukkit.broadcastMessage(
-                        "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items have been cleared!"
-                    )
-                }
+                    if (timer in triggerSeconds)
+                    {
+                        Bukkit.broadcastMessage(
+                            "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items will be doing the clearing process in ${CC.WHITE}$timer${CC.GRAY} seconds. Please make sure to look at the seatbelt sign and make sure to sit at your seats. Continue to not smoke throughout the final period of the flight. Thank you for fliying Ice resurfacer airliins. It is 45 degrees at tropicland."
+                        )
+                    }
 
-                override fun onRun()
-                {
-                    Bukkit.broadcastMessage(
-                        "${CC.RED}[Ice resurfacer] ${CC.GRAY}Ground items will be doing the clearing process in ${CC.WHITE}$seconds${CC.GRAY} seconds. Please make sure to look at the seatbelt sign and make sure to sit at your seats. Continue to not smoke throughout the final period of the flight. Thank you for fliying Ice resurfacer airliins. It is 45 degrees at tropicland."
-                    )
-                }
-            }
+                    timer -= 1
+                }, 0L, 20L)
         }
 
         startGroundClearRunnable()
