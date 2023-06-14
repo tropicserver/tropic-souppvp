@@ -241,8 +241,14 @@ object ListenerService : Listener
     @EventHandler
     fun PlayerDeathEvent.on()
     {
+        drops.removeIf {
+            it.type != Material.MUSHROOM_SOUP
+        }
+
         deathMessage =
-            "${CC.RED}${entity.name} was killed by ${entity.killer?.name}!"
+            "${CC.GREEN}${entity.name}${CC.SEC} was killed${
+                if (entity.killer != null) "by ${CC.GREEN}${entity.killer?.name}" else ""
+            }!"
 
         entity.profile.apply {
             deaths += 1
