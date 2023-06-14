@@ -335,7 +335,7 @@ object ListenerService : Listener
 
         deathMessage =
             "${CC.GREEN}${entity.name}${CC.GRAY} was killed${
-                if (entity.killer != null) " by ${CC.GREEN}${entity.killer?.name}" else ""
+                if (entity.killer != null) " by ${CC.RED}${entity.killer?.name}" else ""
             }${CC.GRAY}."
 
         entity.profile.apply {
