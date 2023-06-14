@@ -230,7 +230,11 @@ object ListenerService : Listener
         }
 
         profile.player().refresh(GameMode.ADVENTURE)
-        profile.player().teleport(config.spawn)
+
+        if (from == PlayerState.Loading)
+        {
+            profile.player().teleport(config.spawn)
+        }
     }
 
     @EventHandler
