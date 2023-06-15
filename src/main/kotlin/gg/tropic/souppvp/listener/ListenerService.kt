@@ -333,10 +333,7 @@ object ListenerService : Listener
         drops.clear()
         drops += soup
 
-        deathMessage =
-            "${CC.GREEN}${entity.name}${CC.GRAY} was killed${
-                if (entity.killer != null) " by ${CC.RED}${entity.killer?.name}" else ""
-            }${CC.GRAY}."
+        deathMessage = null
 
         entity.profile.apply {
             deaths += 1
@@ -365,12 +362,19 @@ object ListenerService : Listener
             profile.kills += 1
             profile.killStreak += 1
 
-            profile.coins += 13
+            if (profile.killStreak % 5 == 0)
+            {
+                Bukkit.broadcastMessage(
+                    "${CC.D_AQUA}$name${CC.SEC} is on a ${CC.D_AQUA}${profile.killStreak}${CC.SEC} killstreak!"
+                )
+            }
+
+            profile.coins += 17
             profile.experience += 3
 
             sendMessage(arrayOf(
-                "${CC.GOLD}+13 coins (killing a player)",
-                "${CC.GREEN}+3 exp (killing a player)"
+                "${CC.GOLD}+17 coins (killing a player)",
+                "${CC.GREEN}+3 xp (killing a player)"
             ))
 
             if (profile.maxKillStreak < profile.killStreak)
