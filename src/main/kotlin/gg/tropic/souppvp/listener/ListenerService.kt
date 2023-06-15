@@ -362,20 +362,35 @@ object ListenerService : Listener
             profile.kills += 1
             profile.killStreak += 1
 
-            if (profile.killStreak % 5 == 0)
+            profile.coins += 17
+            profile.experience += 3
+
+            sendMessage(
+                arrayOf(
+                    "${CC.GOLD}+17 coins (killing a player)",
+                    "${CC.GREEN}+3 xp (killing a player)"
+                )
+            )
+
+            if (profile.killStreak == 5 || profile.killStreak % 10 == 0)
             {
                 Bukkit.broadcastMessage(
                     "${CC.D_AQUA}$name${CC.SEC} is on a ${CC.D_AQUA}${profile.killStreak}${CC.SEC} killstreak!"
                 )
+
+                val coinAmount = ((profile.killStreak / .3) / 2).toInt()
+                val xpAmount = profile.killStreak / 1.3
+
+                profile.coins += coinAmount
+                profile.experience += xpAmount.toInt()
+
+                sendMessage(
+                    arrayOf(
+                        "${CC.GOLD}+$coinAmount coins (${profile.killStreak} killstreak)",
+                        "${CC.GREEN}+${xpAmount.toInt()} xp (${profile.killStreak} killstreak)"
+                    )
+                )
             }
-
-            profile.coins += 17
-            profile.experience += 3
-
-            sendMessage(arrayOf(
-                "${CC.GOLD}+17 coins (killing a player)",
-                "${CC.GREEN}+3 xp (killing a player)"
-            ))
 
             if (profile.maxKillStreak < profile.killStreak)
             {
@@ -580,9 +595,11 @@ object ListenerService : Listener
                     ?.apply {
                         if (System.currentTimeMillis() < this)
                         {
-                            player.sendMessage("${CC.RED}Please wait ${CC.B_RED}${
-                                TimeUtil.formatIntoAbbreviatedString((this - System.currentTimeMillis()).toInt() / 1000)
-                            }${CC.RED} before using this again!")
+                            player.sendMessage(
+                                "${CC.RED}Please wait ${CC.B_RED}${
+                                    TimeUtil.formatIntoAbbreviatedString((this - System.currentTimeMillis()).toInt() / 1000)
+                                }${CC.RED} before using this again!"
+                            )
                             return
                         }
                     }
