@@ -18,9 +18,11 @@ import me.lucko.helper.event.filter.EventFilters
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.ItemUtils
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.math.Numbers
 import net.evilblock.cubed.util.time.TimeUtil
+import net.minecraft.server.v1_8_R3.NBTTagString
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -595,37 +597,31 @@ object ListenerService : Listener
         if (
             player.profile.state == PlayerState.Warzone &&
             action == Action.RIGHT_CLICK_AIR &&
-            item.hasItemMeta() && item.itemMeta.hasLore()
+            hasItem() &&
+            ItemUtils.itemTagHasKey(item, "ability")
         )
         {
-            val lore = item.itemMeta.lore
-
-            if (lore.isNotEmpty() && lore.last() == AbilityService.abilityMetaKey)
-            {
-                abilityCooldownCache[player.uniqueId]
-                    ?.apply {
-                        if (System.currentTimeMillis() < this)
-                        {
-                            player.sendMessage(
-                                "${CC.RED}Please wait ${CC.B_RED}${
-                                    TimeUtil.formatIntoAbbreviatedString((this - System.currentTimeMillis()).toInt() / 1000)
-                                }${CC.RED} before using this again!"
-                            )
-                            return
-                        }
+            abilityCooldownCache[player.uniqueId]
+                ?.apply {
+                    if (System.currentTimeMillis() < this)
+                    {
+                        player.sendMessage(
+                            "${CC.RED}Please wait ${CC.B_RED}${
+                                TimeUtil.formatIntoAbbreviatedString((this - System.currentTimeMillis()).toInt() / 1000)
+                            }${CC.RED} before using this again!"
+                        )
+                        return
                     }
+                }
 
-                val similar = AbilityService
-                    .mappings.values
-                    .firstOrNull {
-                        it.deployed.isSimilar(item)
-                    }
-                    ?: return
+            val similar = AbilityService
+                // TODO: what the hell?
+                .mappings[(ItemUtils.readItemTagKey(item, "ability") as NBTTagString).a_()]
+                ?: return
 
-                similar.use(player, item)
-                abilityCooldownCache[player.uniqueId] =
-                    System.currentTimeMillis() + similar.cooldown.toMillis()
-            }
+            similar.use(player, item)
+            abilityCooldownCache[player.uniqueId] =
+                System.currentTimeMillis() + similar.cooldown.toMillis()
         }
 
         if (action == Action.RIGHT_CLICK_BLOCK)

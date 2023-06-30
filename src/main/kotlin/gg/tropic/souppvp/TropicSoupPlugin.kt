@@ -9,6 +9,8 @@ import gg.scala.commons.core.plugin.PluginWebsite
 import gg.scala.commons.preconfigure.PreConfigureSubTypeProcessor
 import gg.tropic.souppvp.kit.ability.Ability
 import gg.tropic.souppvp.kit.ability.AbilityService
+import org.bukkit.Bukkit
+import org.bukkit.entity.Entity
 
 /**
  * @author GrowlyX
@@ -32,6 +34,10 @@ class TropicSoupPlugin : ExtendedScalaPlugin()
     @ContainerEnable
     fun containerEnable()
     {
+        Bukkit.getWorlds().forEach {
+            it.entities.forEach(Entity::remove)
+        }
+
         PreConfigureSubTypeProcessor
             .register<Ability> {
                 AbilityService.mappings[it.id] = it
