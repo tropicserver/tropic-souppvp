@@ -107,8 +107,8 @@ object ListenerService : Listener
         }
 
         var timer = 180
-        val triggerSeconds = listOf(30, 5, 4, 3, 2, 1)
 
+        // TODO: TTL ground items`
         Schedulers
             .async()
             .runRepeating({ _ ->
@@ -123,23 +123,10 @@ object ListenerService : Listener
                                         entity.remove()
                                     }
                             }
-
-                        Bukkit.broadcastMessage(
-                            "${CC.RED}[Server] ${CC.GRAY}Ground items have been cleared!"
-                        )
                     }
                     timer = 180
                     return@runRepeating
                 }
-
-                if (timer in triggerSeconds)
-                {
-                    Bukkit.broadcastMessage(
-                        "${CC.RED}[Server] ${CC.GRAY}Ground items will be cleared in ${CC.WHITE}$timer${CC.GRAY} seconds."
-                    )
-                }
-
-                timer -= 1
             }, 0L, 20L)
     }
 

@@ -15,6 +15,8 @@ import gg.tropic.souppvp.config.LocalZone
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.Kit
 import gg.tropic.souppvp.kit.ability.AbilityService
+import gg.tropic.souppvp.leaderboard.LeaderboardType
+import gg.tropic.souppvp.leaderboard.hologram.LeaderboardHologram
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.menu.menus.TextEditorMenu
@@ -114,6 +116,15 @@ object AdminCommands : ScalaCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("leaderboard place-hologram")
+    fun onPlaceHolo(player: ScalaPlayer, type: LeaderboardType)
+    {
+        LeaderboardHologram(type, player.bukkit().location)
+            .configure()
+
+        player.sendMessage("${CC.GREEN}Placed leaderboard!")
     }
 
     @Subcommand("player add-balance")
