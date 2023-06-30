@@ -8,7 +8,9 @@ import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.command.ScalaCommandManager
 import gg.scala.commons.issuer.ScalaPlayer
+import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.player.LemonPlayer
+import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.LocalZone
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.Kit
@@ -19,6 +21,7 @@ import net.evilblock.cubed.menu.menus.TextEditorMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.entity.Player
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
@@ -31,6 +34,9 @@ import org.bukkit.potion.PotionEffectType
 @CommandPermission("soup.command.admin")
 object AdminCommands : ScalaCommand()
 {
+    @Inject
+    lateinit var plugin: TropicSoupPlugin
+
     private val potionEffectRegistry = """
             SPEED
             SLOW
@@ -136,13 +142,13 @@ object AdminCommands : ScalaCommand()
                         .withText("Type when you get to the maximum")
                         .acceptInput { _, _ ->
                             val maximum = player.bukkit().location
-                            spawnZone = LocalZone(
+                            spawnZone += LocalZone(
                                 zoneMin = minimum,
                                 zoneMax = maximum
                             )
                             pushUpdates()
 
-                            player.sendMessage("${CC.GREEN}Updated the spawn zone!")
+                            player.sendMessage("${CC.GREEN}Updated the spawn zone! You now have ${spawnZone.size} zones.")
                         }
                         .start(player.bukkit())
                 }
@@ -166,6 +172,16 @@ object AdminCommands : ScalaCommand()
                 "${CC.GREEN}Added new kit: ${CC.WHITE}$id${CC.GREEN}."
             )
         }
+
+    @Subcommand("kit aggregate-all-abilities")
+    fun onAggAbilities(player: ScalaPlayer)
+    {
+        config.kits
+            .flatMap { it.value.abilitySlots.values }
+            .forEach {
+                player.sendMessage(it)
+            }
+    }
 
     @Subcommand("kit delete")
     fun onKitCreate(player: ScalaPlayer, kit: Kit) =
@@ -379,6 +395,28 @@ object AdminCommands : ScalaCommand()
                 "${CC.GREEN}You set the server's spawn location."
             )
         }
+
+    @Subcommand("builder build-mode")
+    fun onBuildMode(player: ScalaPlayer)
+    {
+        if (player.bukkit().hasMetadata("builder"))
+        {
+            player.bukkit()
+                .removeMetadata(
+                    "builder", plugin
+                )
+
+            player.sendMessage("${CC.RED}You've exited build mode!")
+            return
+        }
+
+        player.bukkit().setMetadata(
+            "builder",
+            FixedMetadataValue(plugin, "builder")
+        )
+
+        player.sendMessage("${CC.GREEN}You've entered build mode!")
+    }
 
     @Subcommand("edit-login-message")
     @Description("Set the server's login message.")

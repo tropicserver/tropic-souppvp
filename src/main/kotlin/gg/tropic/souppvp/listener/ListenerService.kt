@@ -29,6 +29,7 @@ import org.bukkit.block.BlockFace
 import org.bukkit.block.Sign
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -90,8 +91,6 @@ object ListenerService : Listener
             .registerEvents(this, plugin)
 
         listOf(
-            BlockBreakEvent::class.java,
-            BlockPlaceEvent::class.java,
             FoodLevelChangeEvent::class.java,
             PlayerBedEnterEvent::class.java,
             PlayerPortalEvent::class.java,
@@ -142,6 +141,20 @@ object ListenerService : Listener
 
                 timer -= 1
             }, 0L, 20L)
+    }
+
+    @EventHandler
+    fun BlockBreakEvent.on() = ensureBuilder(player)
+
+    @EventHandler
+    fun BlockPlaceEvent.on() = ensureBuilder(player)
+
+    fun Cancellable.ensureBuilder(player: Player)
+    {
+        if (!player.hasMetadata("builder"))
+        {
+            isCancelled = true
+        }
     }
 
     @EventHandler
@@ -250,6 +263,7 @@ object ListenerService : Listener
             ?.apply {
                 player.profile.apply {
                     deaths += 1
+                    coins -= 100
 
                     if (killStreak > 0)
                     {
@@ -302,9 +316,19 @@ object ListenerService : Listener
         player: Player
     )
     {
+        val containsFrom = config.spawnZone
+            .any {
+                it.cuboid.contains(from)
+            }
+
+        val containsTo = config.spawnZone
+            .any {
+                it.cuboid.contains(to)
+            }
+
         if (
-            config.spawnZone.cuboid.contains(from) &&
-            !config.spawnZone.cuboid.contains(to)
+            containsFrom &&
+            !containsTo
         )
         {
             player.profile.state = PlayerState.Warzone
@@ -313,8 +337,8 @@ object ListenerService : Listener
         }
 
         if (
-            !config.spawnZone.cuboid.contains(from) &&
-            config.spawnZone.cuboid.contains(to)
+            !containsFrom &&
+            containsTo
         )
         {
             player.profile.state = PlayerState.Spawn

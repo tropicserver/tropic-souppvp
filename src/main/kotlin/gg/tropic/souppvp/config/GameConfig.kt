@@ -15,14 +15,16 @@ class GameConfig(
         "default" to Kit(id = "default")
     ),
     var launchpad: Launchpads = Launchpads(),
-    var spawnZone: LocalZone = LocalZone(
-        zoneMin = Location(
-            Bukkit.getWorlds()[0],
-            -27.5, 64.0, -21.5
-        ),
-        zoneMax = Location(
-            Bukkit.getWorlds()[0],
-            -2.5, 90.0, -45.5
+    var spawnZone: List<LocalZone> = mutableListOf(
+        LocalZone(
+            zoneMin = Location(
+                Bukkit.getWorlds()[0],
+                -27.5, 64.0, -21.5
+            ),
+            zoneMax = Location(
+                Bukkit.getWorlds()[0],
+                -2.5, 90.0, -45.5
+            )
         )
     ),
     var spawn: Location = Location(
