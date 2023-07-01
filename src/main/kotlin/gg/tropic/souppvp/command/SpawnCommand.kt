@@ -18,6 +18,7 @@ import me.lucko.helper.Schedulers
 import me.lucko.helper.event.filter.EventFilters
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
+import org.bukkit.Sound
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.metadata.FixedMetadataValue
@@ -92,14 +93,18 @@ object SpawnCommand : ScalaCommand()
             .runRepeating({ _ ->
                 if (count <= 0)
                 {
+                    player.profile.state = PlayerState.Spawn
                     player.bukkit().teleport(config.spawn)
 
                     player.sendMessage("${CC.B_GREEN}You've been teleported to spawn!")
+                    player.bukkit().playSound(player.bukkit().location, Sound.NOTE_PLING, 2.0f, 1.5f)
+
                     composite.closeAndReportException()
                     return@runRepeating
                 }
 
                 player.sendMessage("${CC.GRAY}Teleporting in ${count--}...")
+                player.bukkit().playSound(player.bukkit().location, Sound.NOTE_PLING, 1.0f, 0.5f)
             }, 0L, 20L)
             .bindWith(composite)
 

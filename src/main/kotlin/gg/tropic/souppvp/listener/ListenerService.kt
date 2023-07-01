@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.tropic.souppvp.LightningUtilities
 import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.KitMenu
@@ -48,6 +49,7 @@ import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
+import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.TimeUnit
 
 /**
@@ -86,6 +88,9 @@ object ListenerService : Listener
         .expireAfterWrite(5L, TimeUnit.SECONDS)
         .build<UUID, UUID>()
 
+    private val fallenItemCache =
+        CopyOnWriteArraySet<Pair<Long, List<Item>>>()
+
     @Configure
     fun configure()
     {
@@ -108,26 +113,15 @@ object ListenerService : Listener
                 .bindWith(plugin)
         }
 
-        var timer = 180
-
-        // TODO: TTL ground items`
         Schedulers
             .async()
             .runRepeating({ _ ->
-                if (timer <= 0)
-                {
-                    Tasks.sync {
-                        Bukkit.getWorlds()
-                            .forEach {
-                                it.entities
-                                    .filterIsInstance<Item>()
-                                    .forEach { entity ->
-                                        entity.remove()
-                                    }
-                            }
+                fallenItemCache.forEach {
+                    if (System.currentTimeMillis() >= it.first)
+                    {
+                        it.second.forEach(Item::remove)
+                        fallenItemCache.remove(it)
                     }
-                    timer = 180
-                    return@runRepeating
                 }
             }, 0L, 20L)
     }
@@ -330,8 +324,9 @@ object ListenerService : Listener
             containsTo
         )
         {
-            player.profile.state = PlayerState.Spawn
-            return
+            val vector = player.location
+                .direction.multiply(-1.7)
+            player.velocity = vector
         }
     }
 
@@ -371,7 +366,11 @@ object ListenerService : Listener
                 terminable.closeAndReportException()
             }
 
+        LightningUtilities.spawnLightning(entity, entity.location)
+
         entity.killer?.apply {
+            LightningUtilities.spawnLightning(this, entity.location)
+
             profile.kills += 1
             profile.killStreak += 1
 
@@ -471,13 +470,7 @@ object ListenerService : Listener
             return
         }
 
-        val lore = itemDrop.itemStack.itemMeta.lore
-
-        if (
-            lore != null &&
-            lore.isNotEmpty() &&
-            lore.last() == AbilityService.abilityMetaKey
-        )
+        if (ItemUtils.itemTagHasKey(itemDrop.itemStack, "ability"))
         {
             isCancelled = true
             return
@@ -557,8 +550,9 @@ object ListenerService : Listener
 
         profile.player().refresh(GameMode.SURVIVAL)
         profile.previouslyChosenKit
-            ?.apply {
-                val kit = config.kits[this]
+            .apply {
+                val kit = config
+                    .kits[this ?: config.defaultKit ?: "PvP"]
                     ?: return@apply
 
                 kit.applyTo(profile.player())

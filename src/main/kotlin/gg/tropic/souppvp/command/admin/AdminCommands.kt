@@ -127,6 +127,13 @@ object AdminCommands : ScalaCommand()
         player.sendMessage("${CC.GREEN}Placed leaderboard!")
     }
 
+    @Subcommand("default-kit")
+    fun onSetDefaultKit(player: ScalaPlayer, kit: Kit)
+    {
+        config.defaultKit = kit.id
+        player.sendMessage("${CC.GREEN}Default kit is now: ${CC.WHITE}${kit.id}")
+    }
+
     @Subcommand("player add-balance")
     @Description("Add balance to a player.")
     @CommandCompletion("@players")

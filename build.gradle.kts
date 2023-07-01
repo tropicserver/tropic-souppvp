@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    java
     `maven-publish`
     kotlin("jvm") version "1.8.20"
     kotlin("kapt") version "1.8.20"
@@ -14,6 +15,10 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url = uri("https://repo.dmulloy2.net/repository/public/")
+        }
+
         configureScalaRepository()
     }
 }
@@ -25,6 +30,8 @@ dependencies {
     compileOnly("gg.scala.commons:bukkit:3.1.9")
 
     compileOnly("gg.scala.store:spigot:0.1.8")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+
     compileOnly("gg.scala.spigot:server:1.1.0")
 
     compileOnly("gg.scala.lemon:bukkit:1.6.2")
@@ -46,6 +53,12 @@ tasks.withType<ShadowJar> {
     archiveFileName.set(
         "souppvp-plugin.jar"
     )
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+    options.fork()
+    options.encoding = "UTF-8"
 }
 
 tasks.withType<KotlinCompile> {

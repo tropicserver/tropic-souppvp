@@ -27,6 +27,7 @@ class GameConfig(
             )
         )
     ),
+    var defaultKit: String? = null,
     var spawn: Location = Location(
         Bukkit.getWorlds()[0],
         -15.5, 78.0, -33.5
