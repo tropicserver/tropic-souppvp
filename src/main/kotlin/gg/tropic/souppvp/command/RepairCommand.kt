@@ -73,6 +73,8 @@ object RepairCommand : ScalaCommand()
                     }
             }
 
+        player.bukkit().updateInventory()
+
         player.sendMessage(
             "${CC.GREEN}You've repaired your items!"
         )

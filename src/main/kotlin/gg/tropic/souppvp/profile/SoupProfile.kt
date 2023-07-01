@@ -68,7 +68,7 @@ data class SoupProfile(
             ).callEvent()
         }
 
-    val kdr: Float
+    private val kdr: Float
         get() = if (deaths == 0)
             kills.toFloat()
         else if (kills == 0)
