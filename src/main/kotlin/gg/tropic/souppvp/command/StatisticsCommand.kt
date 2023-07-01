@@ -16,6 +16,7 @@ import gg.tropic.souppvp.profile.SoupProfile
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.math.Numbers
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -69,9 +70,9 @@ object StatisticsCommand : ScalaCommand()
             "${CC.SEC}Kills: ${CC.GREEN}$kills",
             "${CC.SEC}Deaths: ${CC.RED}$deaths",
             "${CC.SEC}KDR: ${CC.D_AQUA}$kdrFormat",
-            "${CC.SEC}Consumed soups: ${CC.AQUA}$soupsConsumed",
+            "${CC.SEC}Consumed soups: ${CC.AQUA}${Numbers.format(soupsConsumed)}",
             "",
-            "${CC.SEC}Balance: ${CC.GOLD}$coins $coinIcon",
+            "${CC.SEC}Balance: ${CC.GOLD}${Numbers.format(coins.toInt())} $coinIcon",
             "${CC.SEC}XP: ${CC.GREEN}$experience",
             "",
             "${CC.D_GREEN}Kill streak:",

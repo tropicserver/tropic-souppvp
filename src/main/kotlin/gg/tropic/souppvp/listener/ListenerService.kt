@@ -586,6 +586,8 @@ object ListenerService : Listener
                 player.health = (player.health + 7.0).coerceAtMost(20.0)
                 player.itemInHand.type = Material.BOWL
                 player.updateInventory()
+
+                player.profile.soupsConsumed += 1
                 return
             }
         }
