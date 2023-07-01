@@ -53,7 +53,7 @@ object RepairCommand : ScalaCommand()
             }
 
         player.profile.coins -= price
-        player.profile.save()k
+        player.profile.save()
 
         player.bukkit().inventory
             .apply {
