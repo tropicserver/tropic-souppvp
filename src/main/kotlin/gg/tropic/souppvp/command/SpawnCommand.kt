@@ -69,7 +69,7 @@ object SpawnCommand : ScalaCommand()
             .extract<CombatTag>("combat")
             ?.apply {
                 throw ConditionFailedException(
-                    "You are combat-tagged! Try again in $expectedEndFormat."
+                    "You are combat-tagged! Try again in ${CC.BOLD}${expectedEndFormat}s${CC.RED}."
                 )
             }
 

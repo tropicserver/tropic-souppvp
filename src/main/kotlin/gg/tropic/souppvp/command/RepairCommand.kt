@@ -48,25 +48,28 @@ object RepairCommand : ScalaCommand()
             .extract<CombatTag>("combat")
             ?.apply {
                 throw ConditionFailedException(
-                    "You are combat-tagged! Try again in $expectedEndFormat."
+                    "You are combat-tagged! Try again in ${CC.BOLD}${expectedEndFormat}s${CC.RED}."
                 )
             }
 
         player.profile.coins -= price
-        player.profile.save()
+        player.profile.save()k
 
         player.bukkit().inventory
             .apply {
-                armorContents.forEach {
-                    it.durability = it.type.maxDurability
-                }
+                armorContents
+                    .filterNotNull()
+                    .forEach {
+                        it.durability = 0
+                    }
 
                 contents
+                    .filterNotNull()
                     .filter {
                         !ItemUtils.itemTagHasKey(it, "ability")
                     }
                     .forEach {
-                        it.durability = it.type.maxDurability
+                        it.durability = 0
                     }
             }
 
