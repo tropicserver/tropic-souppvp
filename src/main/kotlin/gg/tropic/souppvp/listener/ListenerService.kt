@@ -497,6 +497,8 @@ object ListenerService : Listener
         val player = profile.player()
         player.refresh(GameMode.ADVENTURE)
 
+        player.profile.repairs = 0
+
         abilityCooldownCache.remove(player.uniqueId)
 
         hotbarMappings.entries

@@ -32,6 +32,24 @@ data class SoupProfile(
     var bounty: Bounty? = null
     var previouslyChosenKit: String? = null
 
+    @Transient
+    private var backingRepairs: Int? = 0
+
+    var repairs: Int
+        get()
+        {
+            if (backingRepairs == null)
+            {
+                backingRepairs = 0
+            }
+
+            return backingRepairs!!
+        }
+        set(value)
+        {
+            backingRepairs = value
+        }
+
     fun owns(kit: Kit) = ownedKits.contains(kit.id)
 
     @Transient

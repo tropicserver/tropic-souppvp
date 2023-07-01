@@ -23,9 +23,6 @@ import org.bukkit.Sound
 @AutoRegister
 object RepairCommand : ScalaCommand()
 {
-    @Inject
-    lateinit var plugin: TropicSoupPlugin
-
     @CommandAlias("repair")
     fun onRepair(player: ScalaPlayer)
     {
@@ -36,10 +33,13 @@ object RepairCommand : ScalaCommand()
             )
         }
 
-        if (player.profile.coins < 350)
+        val price = (350 + (++player.profile.repairs * 150))
+            .coerceAtMost(1000)
+
+        if (player.profile.coins < price)
         {
             throw ConditionFailedException(
-                "You must have at least ${CC.GOLD}350 $coinIcon${CC.RED} to repair your items."
+                "You must have at least ${CC.GOLD}$price $coinIcon${CC.RED} to repair your items."
             )
         }
 
@@ -52,7 +52,7 @@ object RepairCommand : ScalaCommand()
                 )
             }
 
-        player.profile.coins -= 350
+        player.profile.coins -= price
         player.profile.save()
 
         player.bukkit().inventory
