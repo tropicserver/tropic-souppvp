@@ -1,5 +1,7 @@
 package gg.tropic.souppvp.profile.local
 
+import net.evilblock.cubed.util.time.TimeUtil
+
 /**
  * @author GrowlyX
  * @since 6/13/2023
@@ -9,7 +11,7 @@ data class ItemRenameCooldown(
 )
 {
     val expectedEndFormat: String
-        get() = "%.2f".format(
-            (expectedEnd - System.currentTimeMillis()) / 1000.0f
+        get() = TimeUtil.formatIntoAbbreviatedString(
+            ((expectedEnd - System.currentTimeMillis()) / 1000).toInt()
         )
 }

@@ -1,6 +1,7 @@
 package gg.tropic.souppvp.profile.local
 
 import me.lucko.helper.terminable.composite.CompositeTerminable
+import net.evilblock.cubed.util.time.TimeUtil
 
 /**
  * @author GrowlyX
@@ -12,7 +13,7 @@ data class CombatTag(
 )
 {
     val expectedEndFormat: String
-        get() = "%.2f".format(
-            (expectedEnd - System.currentTimeMillis()) / 1000.0f
+        get() = TimeUtil.formatIntoAbbreviatedString(
+            ((expectedEnd - System.currentTimeMillis()) / 1000).toInt()
         )
 }

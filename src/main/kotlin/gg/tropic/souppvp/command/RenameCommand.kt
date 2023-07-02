@@ -6,7 +6,9 @@ import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.commons.acf.annotation.Flags
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
+import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.filter.ChatMessageFilterHandler
+import gg.tropic.souppvp.TropicSoupPlugin
 import gg.tropic.souppvp.listener.ListenerService
 import gg.tropic.souppvp.profile.PlayerState
 import gg.tropic.souppvp.profile.extract
@@ -26,6 +28,9 @@ import java.util.concurrent.TimeUnit
 @AutoRegister
 object RenameCommand : ScalaCommand()
 {
+    @Inject
+    lateinit var plugin: TropicSoupPlugin
+
     @CommandAlias("rename-sword")
     @CommandPermission("souppvp.donator")
     fun onRepair(
@@ -57,6 +62,12 @@ object RenameCommand : ScalaCommand()
         player
             .extract<ItemRenameCooldown>("rename")
             ?.apply {
+                if (System.currentTimeMillis() > expectedEnd)
+                {
+                    player.removeMetadata("rename", plugin)
+                    return@apply
+                }
+
                 throw ConditionFailedException(
                     "You are on cooldown! Try again in ${CC.BOLD}${expectedEndFormat}s${CC.RED}."
                 )
