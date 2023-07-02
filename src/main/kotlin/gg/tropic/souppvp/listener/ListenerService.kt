@@ -13,6 +13,7 @@ import gg.tropic.souppvp.profile.*
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.local.CombatTag
 import gg.tropic.souppvp.profile.local.RefillStationCooldown
+import gg.tropic.souppvp.qna.QnAMenu
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.event.filter.EventFilters
@@ -27,6 +28,7 @@ import net.minecraft.server.v1_8_R3.NBTTagString
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.Sign
@@ -158,6 +160,21 @@ object ListenerService : Listener
     {
         config.loginMessage
             .forEach(player::sendMessage)
+
+        if (
+            player.profile.initialQnAMenuOpen == false ||
+            player.profile.initialQnAMenuOpen == null
+        )
+        {
+            Tasks.delayed(1L) {
+                player.playSound(
+                    player.location,
+                    Sound.NOTE_BASS,
+                    1.0f, 1.3f
+                )
+                QnAMenu.qna(player)
+            }
+        }
 
         player.profile.state = PlayerState.Spawn
     }
@@ -500,16 +517,19 @@ object ListenerService : Listener
             return
         }
 
-        if (!itemDrop.itemStack.hasItemMeta())
-        {
-            return
-        }
-
         if (ItemUtils.itemTagHasKey(itemDrop.itemStack, "ability"))
         {
             isCancelled = true
             return
         }
+
+        itemDrop.setMetadata(
+            "ttl",
+            FixedMetadataValue(
+                plugin,
+                System.currentTimeMillis() + 8 * 1000L
+            )
+        )
     }
 
     @EventHandler
@@ -536,16 +556,18 @@ object ListenerService : Listener
 
         abilityCooldownCache.remove(player.uniqueId)
 
-        hotbarMappings.entries
-            .forEach {
-                player.inventory.setItem(it.value.second, it.key)
-            }
-
-        player.updateInventory()
-
         if (from == PlayerState.Loading)
         {
             player.teleport(config.spawn)
+        }
+
+        Tasks.delayed(1L) {
+            hotbarMappings.entries
+                .forEach {
+                    player.inventory.setItem(it.value.second, it.key)
+                }
+
+            player.updateInventory()
         }
     }
 

@@ -29,6 +29,8 @@ data class SoupProfile(
     val ownedKits: MutableSet<String> = mutableSetOf()
 ) : IDataStoreObject
 {
+    var initialQnAMenuOpen: Boolean? = null
+
     var bounty: Bounty? = null
     var previouslyChosenKit: String? = null
 
