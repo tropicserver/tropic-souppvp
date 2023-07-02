@@ -13,7 +13,7 @@ import gg.tropic.souppvp.shop.ShopMenu
 @AutoRegister
 object ShopCommand : ScalaCommand()
 {
-    @CommandAlias("qna")
+    @CommandAlias("shop")
     fun onQnA(player: ScalaPlayer)
     {
         ShopMenu().openMenu(player.bukkit())
