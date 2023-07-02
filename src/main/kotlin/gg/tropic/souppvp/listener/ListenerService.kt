@@ -423,6 +423,14 @@ object ListenerService : Listener
         entity.killer?.apply {
             LightningUtilities.spawnLightning(this, entity.location)
 
+            if (
+                itemInHand.hasItemMeta() &&
+                itemInHand.itemMeta.hasDisplayName()
+            )
+            {
+                deathMessage = "${CC.GREEN}${name}${CC.SEC} slain ${CC.RED}${entity.name} using [${CC.WHITE}${itemInHand.itemMeta.displayName}${CC.SEC}]."
+            }
+
             profile.kills += 1
             profile.killStreak += 1
 
