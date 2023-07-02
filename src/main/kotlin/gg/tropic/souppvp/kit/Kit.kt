@@ -39,11 +39,6 @@ class Kit(
 {
     fun applyTo(player: Player)
     {
-        if (player.hasMetadata("kit-applied"))
-        {
-            return
-        }
-
         player.inventory.contents = contents
         player.inventory.armorContents = armor
 

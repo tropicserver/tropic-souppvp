@@ -297,8 +297,6 @@ object ListenerService : Listener
                 terminable.closeAndReportException()
             }
 
-        player.removeMetadata("kit-applied", plugin)
-
         player
             .extract<RefillStationCooldown>("refill")
             ?.apply {
@@ -404,10 +402,6 @@ object ListenerService : Listener
                     )
                 }
         }
-
-        entity.removeMetadata(
-            "kit-applied", plugin
-        )
 
         deathMessage = null
 
@@ -602,6 +596,10 @@ object ListenerService : Listener
 
         player.profile.repairs = 0
 
+        player.removeMetadata(
+            "kit-applied", plugin
+        )
+
         abilityCooldownCache.remove(player.uniqueId)
 
         if (from == PlayerState.Loading)
@@ -664,15 +662,18 @@ object ListenerService : Listener
             return
         }
 
-        profile.player().refresh(GameMode.SURVIVAL)
-        profile.previouslyChosenKit
-            .apply {
-                val kit = config
-                    .kits[this ?: config.defaultKit ?: "PvP"]
-                    ?: return@apply
+        if (!profile.player().hasMetadata("kit-applied"))
+        {
+            profile.player().refresh(GameMode.SURVIVAL)
+            profile.previouslyChosenKit
+                .apply {
+                    val kit = config
+                        .kits[this ?: config.defaultKit ?: "PvP"]
+                        ?: return@apply
 
-                kit.applyTo(profile.player())
-            }
+                    kit.applyTo(profile.player())
+                }
+        }
 
         fallDamageInvincibilityCache.put(
             profile.identifier, profile.identifier
@@ -692,6 +693,9 @@ object ListenerService : Listener
                         it.key.isSimilar(item)
                     }
                     ?.value?.first?.invoke(player)
+                    ?: run {
+                        isCancelled = true
+                    }
                 return
             }
 
