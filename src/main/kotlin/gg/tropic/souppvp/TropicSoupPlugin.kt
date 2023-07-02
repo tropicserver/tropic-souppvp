@@ -9,8 +9,13 @@ import gg.scala.commons.core.plugin.PluginWebsite
 import gg.scala.commons.preconfigure.PreConfigureSubTypeProcessor
 import gg.tropic.souppvp.kit.ability.Ability
 import gg.tropic.souppvp.kit.ability.AbilityService
+import gg.tropic.souppvp.scoreboard.SoupScoreboardAdapter
+import gg.tropic.souppvp.scoreboard.SoupScoreboardAdapter.state
+import me.lucko.helper.Schedulers
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
+import java.lang.Thread.sleep
+import kotlin.concurrent.thread
 
 /**
  * @author GrowlyX
@@ -42,5 +47,11 @@ class TropicSoupPlugin : ExtendedScalaPlugin()
             .register<Ability> {
                 AbilityService.mappings[it.id] = it
             }
+
+        Schedulers
+            .async()
+            .runRepeating({ _ ->
+                state = !state
+            }, 0L, 10 * 20L)
     }
 }

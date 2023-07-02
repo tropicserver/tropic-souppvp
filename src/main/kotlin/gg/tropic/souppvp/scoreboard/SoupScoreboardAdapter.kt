@@ -26,17 +26,7 @@ import java.util.*
 @ScoreboardAdapterRegister
 object SoupScoreboardAdapter : ScoreboardAdapter()
 {
-    private var state = false
-
-    @Configure
-    fun configure()
-    {
-        Schedulers
-            .async()
-            .runRepeating({ _ ->
-                state = !state
-            }, 0L, 5 * 20L)
-    }
+    var state = false
 
     override fun getLines(
         lines: LinkedList<String>,
@@ -44,38 +34,38 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
     )
     {
         val profile = player.profile
+        lines += ""
 
         if (state)
         {
-            lines += ""
             lines += "${CC.WHITE}Kills: ${CC.PRI}${profile.kills}"
             lines += "${CC.WHITE}Deaths: ${CC.PRI}${profile.deaths}"
             lines += "${CC.WHITE}KDR: ${CC.PRI}${profile.kdrFormat}"
             lines += "${CC.WHITE}Kill streak: ${CC.PRI}${profile.killStreak} ${CC.GRAY}(${profile.maxKillStreak})"
-
-            profile.bounty
-                ?.apply {
-                    lines += ""
-                    lines += "${CC.GREEN}Bounty:"
-                    lines += "${CC.WHITE}Contributors: ${CC.GREEN}${contributors.size}"
-                    lines += "${CC.WHITE}Total: ${CC.GOLD}$amount $coinIcon"
-                }
-                ?: run {
-                    lines += ""
-                    lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
-                    lines += "${CC.WHITE}XP: ${CC.GREEN}${Numbers.format(profile.experience)}"
-                }
         } else
         {
-            lines += "${CC.D_AQUA}Top 5 kills:"
+            lines += "${CC.D_GREEN}Top 3 kills:"
 
             LeaderboardService
                 .resultsFor(LeaderboardType.Kills)
-                .take(5)
+                .take(3)
                 .forEach {
-                    lines += " ${CC.WHITE}${it._id.username()}: ${CC.AQUA}${it.value}"
+                    lines += " ${CC.WHITE}${it._id.username()}: ${CC.GREEN}${it.value.toInt()}"
                 }
         }
+
+        profile.bounty
+            ?.apply {
+                lines += ""
+                lines += "${CC.GREEN}Bounty:"
+                lines += "${CC.WHITE}Contributors: ${CC.GREEN}${contributors.size}"
+                lines += "${CC.WHITE}Total: ${CC.GOLD}$amount $coinIcon"
+            }
+            ?: run {
+                lines += ""
+                lines += "${CC.WHITE}Coins: ${CC.GOLD}${Numbers.format(profile.coins)} $coinIcon"
+                lines += "${CC.WHITE}XP: ${CC.GREEN}${Numbers.format(profile.experience)}"
+            }
 
         player
             .extract<CombatTag>("combat")
@@ -88,5 +78,5 @@ object SoupScoreboardAdapter : ScoreboardAdapter()
         lines += "${CC.GRAY}${LemonConstants.WEB_LINK}" + "          "  + CC.GRAY + "      "  + CC.GRAY
     }
 
-    override fun getTitle(player: Player) = "${CC.B_PRI}SoupPvP"
+    override fun getTitle(player: Player) = "${CC.B_PRI}SOUP"
 }
