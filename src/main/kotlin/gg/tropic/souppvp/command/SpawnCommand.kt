@@ -19,6 +19,7 @@ import me.lucko.helper.event.filter.EventFilters
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import net.evilblock.cubed.util.CC
 import org.bukkit.Sound
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.metadata.FixedMetadataValue
@@ -111,6 +112,17 @@ object SpawnCommand : ScalaCommand()
         val id = player.uniqueId
 
         Events
+            .subscribe(EntityDamageEvent::class.java)
+            .filter {
+                it.entity.uniqueId == id
+            }
+            .handler {
+                composite.closeAndReportException()
+                player.sendMessage("${CC.RED}You are no longer returning to spawn because you took damage!")
+            }
+            .bindWith(composite)
+
+        Events
             .subscribe(PlayerMoveEvent::class.java)
             .filter {
                 EventFilters
@@ -122,7 +134,7 @@ object SpawnCommand : ScalaCommand()
             }
             .handler {
                 composite.closeAndReportException()
-                player.sendMessage("${CC.RED}You are no longer returning to spawn!")
+                player.sendMessage("${CC.RED}You are no longer returning to spawn because you moved!")
             }
             .bindWith(composite)
     }

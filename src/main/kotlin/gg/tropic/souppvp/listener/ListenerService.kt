@@ -84,7 +84,15 @@ object ListenerService : Listener
             to
             ({ player: Player ->
                 KitMenu().openMenu(player)
-            } to 0)
+            } to 0),
+        ItemBuilder
+            .of(Material.CHEST)
+            .name("${CC.GREEN}In-Game Shop")
+            .build()
+            to
+            ({ player: Player ->
+                KitMenu().openMenu(player)
+            } to 8)
     )
 
     private val fallDamageInvincibilityCache = CacheBuilder
@@ -120,7 +128,7 @@ object ListenerService : Listener
                 val toRemove = mutableListOf<Item>()
 
                 Bukkit.getWorlds().first()
-                    .entities
+                    .entities.toList()
                     .filterIsInstance<Item>()
                     .forEach {
                         it.extract<Long>("ttl")
