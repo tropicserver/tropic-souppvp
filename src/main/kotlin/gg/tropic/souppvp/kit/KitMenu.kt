@@ -1,6 +1,7 @@
 package gg.tropic.souppvp.kit
 
 import gg.tropic.souppvp.config.config
+import gg.tropic.souppvp.listener.ListenerService.plugin
 import gg.tropic.souppvp.profile.coinIcon
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.menu.Button
@@ -10,6 +11,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.metadata.FixedMetadataValue
 
 /**
  * @author GrowlyX
@@ -72,6 +74,13 @@ class KitMenu : PaginatedMenu()
                             {
                                 profile.previouslyChosenKit = it.id
                                 profile.save()
+
+                                it.applyTo(player)
+
+                                player.setMetadata(
+                                    "kit-applied",
+                                    FixedMetadataValue(plugin, "")
+                                )
 
                                 player.sendMessage("${CC.GREEN}You have selected the ${CC.PRI}${it.displayName}${CC.GREEN} kit!")
                                 player.closeInventory()

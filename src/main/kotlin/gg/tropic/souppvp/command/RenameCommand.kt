@@ -38,17 +38,17 @@ object RenameCommand : ScalaCommand()
         display: String
     )
     {
-        if (player.profile.state != PlayerState.Warzone)
+        if (!player.hasMetadata("kit-applied"))
         {
             throw ConditionFailedException(
-                "You must be fighting to use this command!"
+                "You must have a kit equipped to use this command!"
             )
         }
 
         if (display.length > 20)
         {
             throw ConditionFailedException(
-                "Your dick is too long!"
+                "Your display name is too long! Please enter a name less than 20 characters."
             )
         }
 

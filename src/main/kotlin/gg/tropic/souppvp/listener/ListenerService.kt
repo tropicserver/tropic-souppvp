@@ -297,6 +297,8 @@ object ListenerService : Listener
                 terminable.closeAndReportException()
             }
 
+        player.removeMetadata("kit-applied", plugin)
+
         player
             .extract<RefillStationCooldown>("refill")
             ?.apply {
@@ -402,6 +404,10 @@ object ListenerService : Listener
                     )
                 }
         }
+
+        entity.removeMetadata(
+            "kit-applied", plugin
+        )
 
         deathMessage = null
 
