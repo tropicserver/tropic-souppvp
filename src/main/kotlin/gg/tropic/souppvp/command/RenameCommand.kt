@@ -40,6 +40,13 @@ object RenameCommand : ScalaCommand()
             )
         }
 
+        if (display.length > 20)
+        {
+            throw ConditionFailedException(
+                "Your dick is too long!"
+            )
+        }
+
         if (ChatMessageFilterHandler.handleMessageFilter(player, display, false))
         {
             throw ConditionFailedException(

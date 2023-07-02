@@ -18,7 +18,9 @@ import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.event.filter.EventFilters
 import me.lucko.helper.terminable.composite.CompositeTerminable
+import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.ItemUtils
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -428,7 +430,26 @@ object ListenerService : Listener
                 itemInHand.itemMeta.hasDisplayName()
             )
             {
-                deathMessage = "${CC.GREEN}${name}${CC.SEC} slain ${CC.RED}${entity.name} using [${CC.WHITE}${itemInHand.itemMeta.displayName}${CC.SEC}]."
+                val message = FancyMessage()
+                    .withMessage(
+                        "${CC.RED}${name}${CC.SEC} slain ${CC.GREEN}${entity.name}${CC.SEC} using "
+                    )
+                    .withMessage(
+                        "${CC.I_AQUA}[${itemInHand.itemMeta.displayName}]"
+                    )
+                    .andHoverOf("${CC.D_AQUA}Kit: ${CC.AQUA}${
+                        profile.previouslyChosenKit
+                            ?.let { 
+                                config.kits[it]?.displayName
+                            } 
+                            ?: "???"
+                    }")
+                    .withMessage("${CC.SEC}.")
+
+                Players.all()
+                    .forEach {
+                        message.sendToPlayer(it)
+                    }
             }
 
             profile.kills += 1
