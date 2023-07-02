@@ -48,7 +48,7 @@ object RepairCommand : ScalaCommand()
             .extract<CombatTag>("combat")
             ?.apply {
                 throw ConditionFailedException(
-                    "You are combat-tagged! Try again in ${CC.BOLD}${expectedEndFormat}s${CC.RED}."
+                    "You are combat-tagged! Try again in ${CC.BOLD}$expectedEndFormat${CC.RED}."
                 )
             }
 

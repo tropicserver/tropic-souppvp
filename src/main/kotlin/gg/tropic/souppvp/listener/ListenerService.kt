@@ -428,6 +428,11 @@ object ListenerService : Listener
                 terminable.closeAndReportException()
             }
 
+        entity.extract<RefillStationCooldown>("refill")
+            ?.apply {
+                terminable.closeAndReportException()
+            }
+
         LightningUtilities.spawnLightning(entity, entity.location)
 
         entity.killer?.apply {
@@ -737,7 +742,7 @@ object ListenerService : Listener
                         .extract<RefillStationCooldown>("refill")
                         ?.apply {
                             player.sendMessage(
-                                "${CC.RED}You're on cooldown. You can refill again in ${expectedEndFormat}s!"
+                                "${CC.RED}You're on cooldown. You can refill again in $expectedEndFormat!"
                             )
                             return
                         }

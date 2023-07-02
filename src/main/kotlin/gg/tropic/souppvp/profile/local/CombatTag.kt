@@ -16,4 +16,9 @@ data class CombatTag(
         get() = TimeUtil.formatIntoAbbreviatedString(
             ((expectedEnd - System.currentTimeMillis()) / 1000).toInt()
         )
+
+    val expectedEndFormatSpecific: String
+        get() = "%.2f".format(
+            (expectedEnd - System.currentTimeMillis()) / 1000.0f
+        )
 }

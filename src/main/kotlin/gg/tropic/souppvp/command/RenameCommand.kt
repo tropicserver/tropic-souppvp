@@ -69,7 +69,7 @@ object RenameCommand : ScalaCommand()
                 }
 
                 throw ConditionFailedException(
-                    "You are on cooldown! Try again in ${CC.BOLD}${expectedEndFormat}s${CC.RED}."
+                    "You are on cooldown! Try again in ${CC.BOLD}$expectedEndFormat${CC.RED}."
                 )
             }
 
