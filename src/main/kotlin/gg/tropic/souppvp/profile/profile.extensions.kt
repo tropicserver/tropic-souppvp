@@ -2,6 +2,7 @@ package gg.tropic.souppvp.profile
 
 import gg.scala.commons.issuer.ScalaPlayer
 import org.bukkit.GameMode
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 
 /**
@@ -16,7 +17,7 @@ val Player.profile: SoupProfile
 val ScalaPlayer.profile: SoupProfile
     get() = SoupProfileService.find(bukkit())!!
 
-inline fun <reified T> Player.extract(metadata: String) =
+inline fun <reified T> Entity.extract(metadata: String) =
     getMetadata(metadata).firstOrNull()?.value() as T?
 
 fun Player.refresh(gameMode: GameMode = GameMode.ADVENTURE)

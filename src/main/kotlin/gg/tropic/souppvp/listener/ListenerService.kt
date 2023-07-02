@@ -49,8 +49,8 @@ import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import java.util.*
-import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 /**
  * @author GrowlyX
@@ -88,9 +88,6 @@ object ListenerService : Listener
         .expireAfterWrite(5L, TimeUnit.SECONDS)
         .build<UUID, UUID>()
 
-    private val fallenItemCache =
-        CopyOnWriteArraySet<Pair<Long, List<Item>>>()
-
     @Configure
     fun configure()
     {
@@ -116,12 +113,28 @@ object ListenerService : Listener
         Schedulers
             .async()
             .runRepeating({ _ ->
-                fallenItemCache.forEach {
-                    if (System.currentTimeMillis() >= it.first)
-                    {
-                        it.second.forEach(Item::remove)
-                        fallenItemCache.remove(it)
+                val toRemove = mutableListOf<Item>()
+
+                Bukkit.getWorlds().first()
+                    .entities
+                    .filterIsInstance<Item>()
+                    .forEach {
+                        it.extract<Long>("ttl")
+                            ?.apply {
+                                if (System.currentTimeMillis() > this)
+                                {
+                                    toRemove += it
+                                }
+                            }
                     }
+
+                if (toRemove.isNotEmpty())
+                {
+                    Schedulers
+                        .sync()
+                        .run {
+                            toRemove.forEach(Item::remove)
+                        }
                 }
             }, 0L, 20L)
     }
@@ -339,7 +352,29 @@ object ListenerService : Listener
 
         val soup = drops.take(18)
         drops.clear()
-        drops += soup
+
+        val droppedSoupItems = mutableSetOf<Item>()
+
+        soup.forEach {
+            droppedSoupItems += entity.world
+                .dropItem(
+                    entity.location.add(
+                        (Random.nextInt(2) - 1).toDouble(),
+                        0.0,
+                        (Random.nextInt(2) - 1).toDouble()
+                    ),
+                    it
+                )
+                .apply {
+                    setMetadata(
+                        "ttl",
+                        FixedMetadataValue(
+                            plugin,
+                            System.currentTimeMillis() + 8 * 1000L
+                        )
+                    )
+                }
+        }
 
         deathMessage = null
 
@@ -511,6 +546,15 @@ object ListenerService : Listener
         if (from == PlayerState.Loading)
         {
             player.teleport(config.spawn)
+        }
+    }
+
+    @EventHandler
+    fun EntityDamageEvent.onMagic()
+    {
+        if (cause == EntityDamageEvent.DamageCause.MAGIC)
+        {
+            damage = if (damage < 2.5) 2.5 else damage / 1.25
         }
     }
 
