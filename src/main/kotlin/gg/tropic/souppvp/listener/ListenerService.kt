@@ -14,6 +14,7 @@ import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
 import gg.tropic.souppvp.profile.local.CombatTag
 import gg.tropic.souppvp.profile.local.RefillStationCooldown
 import gg.tropic.souppvp.qna.QnAMenu
+import gg.tropic.souppvp.shop.ShopMenu
 import me.lucko.helper.Events
 import me.lucko.helper.Schedulers
 import me.lucko.helper.event.filter.EventFilters
@@ -91,7 +92,7 @@ object ListenerService : Listener
             .build()
             to
             ({ player: Player ->
-                KitMenu().openMenu(player)
+                ShopMenu().openMenu(player)
             } to 8)
     )
 
