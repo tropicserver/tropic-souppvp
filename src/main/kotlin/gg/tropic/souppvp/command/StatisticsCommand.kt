@@ -52,13 +52,15 @@ object StatisticsCommand : ScalaCommand()
 
         return target
             .validatePlayers(player.bukkit(), false) {
-                val profile = DataStoreObjectControllerCache
-                    .findNotNull<SoupProfile>()
-                    .load(it.uniqueId, DataStoreStorageType.MONGO)
-                    .join()
-                    ?: throw ConditionFailedException(
-                        "${CC.YELLOW}${it.name}${CC.RED} has not yet joined our Soup server."
-                    )
+                val profile =
+                    it.bukkitPlayer?.profile
+                        ?: DataStoreObjectControllerCache
+                            .findNotNull<SoupProfile>()
+                            .load(it.uniqueId, DataStoreStorageType.MONGO)
+                            .join()
+                        ?: throw ConditionFailedException(
+                            "${CC.YELLOW}${it.name}${CC.RED} has not yet joined our Soup server."
+                        )
 
                 player.sendMessage("${CC.GREEN}Stats for ${it.name}:")
                 profile.sendStatsForProfile(player)
