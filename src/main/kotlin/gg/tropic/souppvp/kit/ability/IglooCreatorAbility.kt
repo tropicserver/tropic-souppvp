@@ -131,6 +131,6 @@ object IglooCreatorAbility : Ability()
                 }
             }, 10L, TimeUnit.SECONDS)
 
-        return false
+        return true
     }
 }
