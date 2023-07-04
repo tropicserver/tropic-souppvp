@@ -290,23 +290,6 @@ object ListenerService : Listener
     @EventHandler(priority = EventPriority.MONITOR)
     fun PlayerQuitEvent.on()
     {
-        // TODO: use pre-logout in orch
-        player
-            .extract<CombatTag>("combat")
-            ?.apply {
-                player.profile.apply {
-                    deaths += 1
-                    coins -= 100
-
-                    if (killStreak > 0)
-                    {
-                        killStreak = 0
-                    }
-                }
-
-                terminable.closeAndReportException()
-            }
-
         player
             .extract<RefillStationCooldown>("refill")
             ?.apply {

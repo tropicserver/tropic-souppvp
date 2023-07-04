@@ -26,8 +26,8 @@ allprojects {
 dependencies {
     compileOnly(kotlin("stdlib"))
 
-    kapt("gg.scala.commons:bukkit:3.1.9")
-    compileOnly("gg.scala.commons:bukkit:3.1.9")
+    kapt("gg.scala.commons:bukkit:3.2.1")
+    compileOnly("gg.scala.commons:bukkit:3.2.1")
 
     compileOnly("gg.scala.achievements:scala-achievements-plugin:1.0.4")
 
