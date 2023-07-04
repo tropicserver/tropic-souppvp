@@ -2,19 +2,14 @@ package gg.tropic.souppvp.command
 
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.issuer.ScalaPlayer
-import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.player.LemonPlayer
-import gg.tropic.souppvp.TropicSoupPlugin
-import gg.tropic.souppvp.profile.PlayerState
 import gg.tropic.souppvp.profile.coinIcon
-import gg.tropic.souppvp.profile.extract
-import gg.tropic.souppvp.profile.local.CombatTag
 import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.Sound
 
 /**
@@ -25,6 +20,7 @@ import org.bukkit.Sound
 object PayCommand : ScalaCommand()
 {
     @CommandAlias("pay")
+    @CommandCompletion("@players")
     fun onRepair(player: ScalaPlayer, target: LemonPlayer, amount: Int)
     {
         if (amount <= 0)

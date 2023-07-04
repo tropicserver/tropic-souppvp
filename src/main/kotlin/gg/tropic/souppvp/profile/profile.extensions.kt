@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 6/12/2023
  */
-val coinIcon = "⛀"
+const val coinIcon = "⛀"
 
 val Player.profile: SoupProfile
     get() = SoupProfileService.find(this)!!
