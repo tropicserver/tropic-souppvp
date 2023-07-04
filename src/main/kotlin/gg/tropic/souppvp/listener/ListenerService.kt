@@ -1,6 +1,7 @@
 package gg.tropic.souppvp.listener
 
 import com.google.common.cache.CacheBuilder
+import gg.scala.achievements.plugin.menu.AchievementViewMenu
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -86,6 +87,14 @@ object ListenerService : Listener
             ({ player: Player ->
                 KitMenu().openMenu(player)
             } to 0),
+        ItemBuilder
+            .of(Material.PAPER)
+            .name("${CC.GREEN}Quests")
+            .build()
+            to
+            ({ player: Player ->
+                AchievementViewMenu().openMenu(player)
+            } to 7),
         ItemBuilder
             .of(Material.CHEST)
             .name("${CC.GREEN}In-Game Shop")

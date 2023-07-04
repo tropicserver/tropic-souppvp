@@ -1,5 +1,7 @@
 package gg.tropic.souppvp
 
+import gg.scala.achievements.plugin.ScalaAchievementsPlugin
+import gg.scala.achievements.plugin.model.AchievementBrandType
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.core.plugin.Plugin
