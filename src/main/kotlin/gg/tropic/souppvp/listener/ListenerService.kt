@@ -124,7 +124,7 @@ object ListenerService : Listener
         }
 
         Schedulers
-            .async()
+            .sync()
             .runRepeating({ _ ->
                 val toRemove = mutableListOf<Item>()
 
@@ -143,11 +143,7 @@ object ListenerService : Listener
 
                 if (toRemove.isNotEmpty())
                 {
-                    Schedulers
-                        .sync()
-                        .run {
-                            toRemove.forEach(Item::remove)
-                        }
+                    toRemove.forEach(Item::remove)
                 }
             }, 0L, 20L)
     }

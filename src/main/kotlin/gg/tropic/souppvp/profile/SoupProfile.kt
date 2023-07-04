@@ -1,8 +1,11 @@
 package gg.tropic.souppvp.profile
 
+import gg.scala.achievements.plugin.profile.AchievementProfileOrchestrator
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
+import gg.tropic.souppvp.achievement.TTLKillDataCollector
+import gg.tropic.souppvp.config.config
 import gg.tropic.souppvp.kit.Kit
 import gg.tropic.souppvp.profile.bounty.Bounty
 import gg.tropic.souppvp.profile.event.PlayerStateChangeEvent
@@ -15,7 +18,6 @@ import java.util.*
  */
 data class SoupProfile(
     override val identifier: UUID,
-    var kills: Int = 0,
     var killStreak: Int = 0,
     var maxKillStreak: Int = 0,
     var deaths: Int = 0,
@@ -32,7 +34,25 @@ data class SoupProfile(
     var initialQnAMenuOpen: Boolean? = null
 
     var bounty: Bounty? = null
-    var previouslyChosenKit: String? = null
+    var previouslyChosenKit: String? = config.defaultKit
+
+    var kills: Int = 0
+        set(value)
+        {
+            field = value
+
+            AchievementProfileOrchestrator
+                .find(identifier)
+                ?.apply {
+                    dataCollector<TTLKillDataCollector>("dailykills")
+                        ?.apply collector@{
+                            updateValue(
+                                this.value + 1,
+                                this@apply
+                            )
+                        }
+                }
+        }
 
     @Transient
     private var backingRepairs: Int? = 0

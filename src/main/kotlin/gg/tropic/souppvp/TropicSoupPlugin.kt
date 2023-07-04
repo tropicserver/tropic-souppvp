@@ -31,6 +31,7 @@ import kotlin.concurrent.thread
 
 @PluginDependency("Lemon")
 @PluginDependency("scala-commons")
+@PluginDependency("Achievements")
 
 @PluginDependency("ScBasics", soft = true)
 @PluginDependency("cloudsync", soft = true)
