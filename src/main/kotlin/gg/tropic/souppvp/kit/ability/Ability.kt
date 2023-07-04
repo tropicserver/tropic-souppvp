@@ -1,9 +1,7 @@
 package gg.tropic.souppvp.kit.ability
 
-import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.ItemUtils
-import net.evilblock.cubed.util.nms.NBTUtil
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.time.Duration
@@ -29,5 +27,5 @@ sealed class Ability
 
     abstract fun use(
         player: Player, item: ItemStack
-    )
+    ): Boolean
 }

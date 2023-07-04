@@ -87,7 +87,7 @@ object IglooCreatorAbility : Ability()
 
     override val cooldown = Duration.ofSeconds(25L)!!
 
-    override fun use(player: Player, item: ItemStack)
+    override fun use(player: Player, item: ItemStack): Boolean
     {
         val trackedBlocks = mutableListOf<Block>()
         val location = player.location
@@ -130,5 +130,7 @@ object IglooCreatorAbility : Ability()
                     it.type = Material.AIR
                 }
             }, 10L, TimeUnit.SECONDS)
+
+        return false
     }
 }

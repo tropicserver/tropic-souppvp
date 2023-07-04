@@ -736,9 +736,11 @@ object ListenerService : Listener
                 .mappings[(ItemUtils.readItemTagKey(item, "ability") as NBTTagString).a_()]
                 ?: return
 
-            similar.use(player, item)
-            abilityCooldownCache[player.uniqueId] =
-                System.currentTimeMillis() + similar.cooldown.toMillis()
+            if (similar.use(player, item))
+            {
+                abilityCooldownCache[player.uniqueId] =
+                    System.currentTimeMillis() + similar.cooldown.toMillis()
+            }
         }
 
         if (action == Action.RIGHT_CLICK_BLOCK)
