@@ -53,6 +53,9 @@ fun Int.buildStageForKills() = AchievementStage(
 
             override fun createDataCollector(profile: AchievementProfile) =
                 TTLKillDataCollector(id)
+
+            override fun matchesRequirement(value: Any?) =
+                ((value as Int?) ?: 0) >= this@buildStageForKills
         }
     ),
     rewards = listOf(
