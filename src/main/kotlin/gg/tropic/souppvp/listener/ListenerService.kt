@@ -2,6 +2,7 @@ package gg.tropic.souppvp.listener
 
 import com.google.common.cache.CacheBuilder
 import gg.scala.achievements.plugin.menu.AchievementViewMenu
+import gg.scala.achievements.plugin.model.AchievementBrandType
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -93,7 +94,8 @@ object ListenerService : Listener
             .build()
             to
             ({ player: Player ->
-                AchievementViewMenu().openMenu(player)
+                AchievementViewMenu(AchievementBrandType.Quest)
+                    .openMenu(player)
             } to 7),
         ItemBuilder
             .of(Material.CHEST)
