@@ -1,11 +1,13 @@
 package gg.tropic.souppvp.kit
 
 import gg.tropic.souppvp.kit.ability.AbilityService
+import gg.tropic.souppvp.listener.ListenerService
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.potion.PotionEffect
 import java.util.*
 
@@ -67,5 +69,9 @@ class Kit(
         }
 
         player.updateInventory()
+        player.setMetadata(
+            "kit-applied",
+            FixedMetadataValue(ListenerService.plugin, "")
+        )
     }
 }

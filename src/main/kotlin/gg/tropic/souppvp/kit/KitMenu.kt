@@ -77,11 +77,6 @@ class KitMenu : PaginatedMenu()
 
                                 it.applyTo(player)
 
-                                player.setMetadata(
-                                    "kit-applied",
-                                    FixedMetadataValue(plugin, "")
-                                )
-
                                 player.sendMessage("${CC.GREEN}You have selected the ${CC.PRI}${it.displayName}${CC.GREEN} kit!")
                                 player.closeInventory()
                             } else

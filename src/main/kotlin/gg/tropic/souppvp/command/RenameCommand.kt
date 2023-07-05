@@ -3,23 +3,16 @@ package gg.tropic.souppvp.command
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandPermission
-import gg.scala.commons.acf.annotation.Flags
+import gg.scala.commons.acf.annotation.Conditions
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
+import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.filter.ChatMessageFilterHandler
 import gg.tropic.souppvp.TropicSoupPlugin
-import gg.tropic.souppvp.listener.ListenerService
-import gg.tropic.souppvp.profile.PlayerState
-import gg.tropic.souppvp.profile.extract
-import gg.tropic.souppvp.profile.local.ItemRenameCooldown
-import gg.tropic.souppvp.profile.profile
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Sound
-import org.bukkit.entity.Player
-import org.bukkit.metadata.FixedMetadataValue
-import java.util.concurrent.TimeUnit
 
 /**
  * @author GrowlyX
@@ -34,11 +27,11 @@ object RenameCommand : ScalaCommand()
     @CommandAlias("rename-sword")
     @CommandPermission("souppvp.donator")
     fun onRepair(
-        @Flags("itemheld") player: Player,
+        @Conditions("cooldown:duration=5,unit=MINUTES") player: ScalaPlayer,
         display: String
     )
     {
-        if (!player.hasMetadata("kit-applied"))
+        if (!player.bukkit().hasMetadata("kit-applied"))
         {
             throw ConditionFailedException(
                 "You must have a kit equipped to use this command!"
@@ -52,51 +45,27 @@ object RenameCommand : ScalaCommand()
             )
         }
 
-        if (ChatMessageFilterHandler.handleMessageFilter(player, display, false))
+        if (ChatMessageFilterHandler.handleMessageFilter(player.bukkit(), display, false))
         {
             throw ConditionFailedException(
                 "You cannot have profanity in your sword name!"
             )
         }
 
-        player
-            .extract<ItemRenameCooldown>("rename")
-            ?.apply {
-                if (System.currentTimeMillis() > expectedEnd)
-                {
-                    player.removeMetadata("rename", plugin)
-                    return@apply
-                }
-
-                throw ConditionFailedException(
-                    "You are on cooldown! Try again in ${CC.BOLD}$expectedEndFormat${CC.RED}."
-                )
-            }
-
         val itemInHand = ItemBuilder
-            .copyOf(player.itemInHand)
+            .copyOf(player.bukkit().itemInHand)
             .name(display)
             .build()
 
-        player.itemInHand = itemInHand
-        player.updateInventory()
+        player.bukkit().itemInHand = itemInHand
+        player.bukkit().updateInventory()
 
         player.sendMessage(
             "${CC.GREEN}You've renamed your sword to: ${CC.WHITE}$display${CC.GREEN}!"
         )
 
-        player.setMetadata(
-            "rename",
-            FixedMetadataValue(
-                ListenerService.plugin,
-                ItemRenameCooldown(
-                    expectedEnd = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5L)
-                )
-            )
-        )
-
-        player.playSound(
-            player.location,
+        player.bukkit().playSound(
+            player.bukkit().location,
             Sound.ORB_PICKUP,
             1.0f, 1.0f
         )
