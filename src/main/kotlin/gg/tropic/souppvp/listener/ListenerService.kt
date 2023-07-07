@@ -90,6 +90,14 @@ object ListenerService : Listener
                 KitMenu().openMenu(player)
             } to 0),
         ItemBuilder
+            .of(Material.SKULL_ITEM)
+            .name("${CC.GREEN}Your Profile")
+            .build()
+            to
+            ({ player: Player ->
+                player.performCommand("profile")
+            } to 4),
+        ItemBuilder
             .of(Material.PAPER)
             .name("${CC.GREEN}Quests")
             .build()

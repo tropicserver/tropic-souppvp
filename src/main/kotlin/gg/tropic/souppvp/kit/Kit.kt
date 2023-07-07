@@ -2,7 +2,6 @@ package gg.tropic.souppvp.kit
 
 import gg.tropic.souppvp.kit.ability.AbilityService
 import gg.tropic.souppvp.listener.ListenerService
-import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import org.bukkit.Material
 import org.bukkit.entity.Player
