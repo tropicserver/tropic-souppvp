@@ -1,5 +1,6 @@
 package gg.tropic.souppvp.leaderboard
 
+import gg.scala.cache.uuid.ScalaStoreUuidCache
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -35,7 +36,7 @@ object LeaderboardService
             .mapIndexed { index, result ->
                 format.format(
                     index + 1,
-                    result._id.username(),
+                    ScalaStoreUuidCache.username(result._id),
                     Numbers.format(result.value)
                 )
             }
