@@ -1,8 +1,8 @@
 package gg.tropic.souppvp.achievement
 
-import gg.scala.achievements.plugin.model.Achievement
-import gg.scala.achievements.plugin.model.AchievementReward
-import gg.scala.achievements.plugin.model.AchievementStage
+import com.cryptomorin.xseries.XMaterial
+import gg.scala.achievements.plugin.ScalaAchievementsPlugin
+import gg.scala.achievements.plugin.model.*
 import gg.scala.achievements.plugin.model.goals.AchievementGoal
 import gg.scala.achievements.plugin.profile.AchievementProfile
 import gg.scala.achievements.plugin.service.AchievementService
@@ -22,6 +22,10 @@ object AchievementService
     @Configure
     fun configure()
     {
+        ScalaAchievementsPlugin.gamemode = GameMode(
+            "SoupPvP", XMaterial.MUSHROOM_STEW
+        )
+
         AchievementService
             .registerAchievement(
                 Achievement(
@@ -34,7 +38,8 @@ object AchievementService
                         150.buildStageForKills()
                     ),
                     rewardsPlayer = true,
-                    visibleWithinMenu = true
+                    visibleWithinMenu = true,
+                    category = AchievementCategory.GameSpecific
                 )
             )
     }

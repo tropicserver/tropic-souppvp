@@ -1,6 +1,7 @@
 package gg.tropic.souppvp.listener
 
 import com.google.common.cache.CacheBuilder
+import gg.scala.achievements.plugin.menu.AchievementMainMenu
 import gg.scala.achievements.plugin.menu.AchievementViewMenu
 import gg.scala.achievements.plugin.model.AchievementBrandType
 import gg.scala.flavor.inject.Inject
@@ -98,12 +99,12 @@ object ListenerService : Listener
                 player.performCommand("profile")
             } to 4),
         ItemBuilder
-            .of(Material.PAPER)
-            .name("${CC.GREEN}Quests")
+            .of(Material.DIAMOND)
+            .name("${CC.GREEN}Achievements")
             .build()
             to
             ({ player: Player ->
-                AchievementViewMenu(AchievementBrandType.Quest)
+                AchievementMainMenu()
                     .openMenu(player)
             } to 7),
         ItemBuilder
