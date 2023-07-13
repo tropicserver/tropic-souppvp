@@ -686,7 +686,7 @@ object ListenerService : Listener
     fun PlayerInteractEvent.on()
     {
         // TODO: fix block interaction but no duplication
-        if (action == Action.RIGHT_CLICK_AIR)
+        if (action.name.contains("RIGHT"))
         {
             if (player.profile.state == PlayerState.Spawn)
             {
