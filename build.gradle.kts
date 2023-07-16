@@ -29,6 +29,7 @@ dependencies {
     kapt("gg.scala.commons:bukkit:3.2.1")
     compileOnly("gg.scala.commons:bukkit:3.2.1")
 
+    compileOnly("gg.tropic.game.extensions:tropic-core-game-extensions:1.1.1")
     compileOnly("gg.scala.achievements:scala-achievements-plugin:1.0.5")
 
     compileOnly("gg.scala.store:spigot:0.1.8")

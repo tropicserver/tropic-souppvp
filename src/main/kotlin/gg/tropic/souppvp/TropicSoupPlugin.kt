@@ -36,6 +36,7 @@ import kotlin.concurrent.thread
 @PluginDependency("Achievements")
 
 @PluginDependency("ScBasics", soft = true)
+@PluginDependency("CoreGameExtensions", soft = true)
 @PluginDependency("cloudsync", soft = true)
 class TropicSoupPlugin : ExtendedScalaPlugin()
 {
